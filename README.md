@@ -15,15 +15,11 @@ This bot contains :
 - Welcome message
 
 ---------------------
-
 For the moment there is no host but I'll host this bot myself on a Raspberry Pi when the project will be more mature.
 
 Moreover, I'm thinking about create a website with a kind of documentation or configuration panel, but it's not necessarily for soon.
 
-Don't hesitate to Watch or Star my Github repository to follow the progresses of my project !
-
-This project is licensed under the MIT license. Please make 
+Don't hesitate to Watch or Star my Github repository to follow the progresses of my project 
 
 ---------------------
-
 If you reuse the source code please mae sure to respect the terms of the license : mention my Github profile !
