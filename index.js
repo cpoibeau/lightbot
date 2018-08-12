@@ -1,44 +1,64 @@
 const discord = require('discord.js');
 const fs = require('fs');
-let bot = new discord.Client();
+let client = new discord.Client();
 
 var prefix = 'lb-';
 
 //Ready + liste des seveurs
-bot.on('ready', () => {
+client.on('ready', () => {
     console.log('Je suis pret');
-    let guildsId = Array.from(bot.guilds.keys());
-    guildsId.forEach(element => {
-        console.log(`> ${bot.guilds.get(element).name}`);
+    let guildsId = Array.from(client.guilds.keys());
+    guildsId.forEach((element) => {
+        console.log(`> ${client.guilds.get(element).name}`);
+    });
+    client.user.setActivity(`Say ${prefix}help for help !`, {
+        url: 'https://discord.js.org',
+        type: 'PLAYING'
     });
 });
 
-//Modification du préfixe
-/*
-bot.on('message', (msg) => {
-    if(msg.content.includes(prefix + 'setPrefix')){
-        let parsedString = msg.content.split(' ');
-        prefix = parsedString[1];
-        msg.channel.send(`Bot prefix has been set to : ${prefix}`)
-    }
-})
-*/
-//Ping
-bot.on('message', (msg) => {
-    if(msg.content.includes(prefix + 'ping')){
-        msg.channel.send('`pong !`');
+
+//Message eventListener
+
+client.on('message', (msg) => {
+    if (msg.author != client.user) {
+        if (msg.content.includes(prefix + 'setPrefix')) {
+            let regex = /([!?:�;,*%$��_-]{1,2})|([\S]{1,4}-)/i;
+            if(regex.test(msg.content.split(' ')[1])){
+                console.log(regex.exec(msg.content.split(' ')[1])[0]);
+            }
+            msg.channel.send(`Bot prefix has been set to : ${prefix}`)
+            client.user.setActivity(`Say ${prefix}help for help !`, {
+                url: 'https://discord.js.org',
+                type: 'PLAYING'
+            });
+
+        } else if (msg.content.includes(prefix + 'help')) {
+            msg.channel.send(
+                `\`${prefix}help\`\n` +
+                `${prefix}ping \n` +
+                `${prefix}setPrefix\n`
+            )
+
+        } else if (msg.content.includes(prefix + 'ping')) {
+            msg.channel.send('`pong !`');
+
+        } else if (msg.content === prefix + 'exit') {
+            msg.delete();
+            client.destroy();
+        }
     }
 });
 
-//Message de bienvenue
-bot.on('guildMemberAdd', (member) => {
+//Welcome message
+client.on('guildMemberAdd', (member) => {
     member.send('Bienenue sur le serveur ' + member.user.username + ' !');
     member.guild.channels.get('478174436466622465').send('Bienvenue sur le serveur <@' + member.user.id + '> !');
 });
 
 //Purge des messages
 /*
-bot.on('message', (msg) => {
+client.on('message', (msg) => {
     if(msg.content === '!purge'){
         let messages = msg.channel.fetchMessages();
         messages.catch
@@ -46,7 +66,7 @@ bot.on('message', (msg) => {
 });
 */
 
-var texte = fs.readFile('config/token.txt', 'utf-8', (err, data) => {
-    if(err) throw err;
-    bot.login(data);
+fs.readFile('config/token.txt', 'utf-8', (err, data) => {
+    if (err) throw err;
+    client.login(data);
 });
