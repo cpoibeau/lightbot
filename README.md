@@ -1,0 +1,2 @@
+# lightbot
+Nodejs discord bot
