@@ -9,7 +9,7 @@ bot.on('ready', () => {
     console.log('Je suis pret');
     let guildsId = Array.from(bot.guilds.keys());
     guildsId.forEach(element => {
-        console.log(bot.guilds.get(element).name);
+        console.log(`> ${bot.guilds.get(element).name}`);
     });
 });
 
@@ -33,7 +33,7 @@ bot.on('message', (msg) => {
 //Message de bienvenue
 bot.on('guildMemberAdd', (member) => {
     member.send('Bienenue sur le serveur ' + member.user.username + ' !');
-    member.guild.channels.get('478166745669173271').send('Bienvenue sur le serveur <@' + member.user.id + '> !');
+    member.guild.channels.get('478174436466622465').send('Bienvenue sur le serveur <@' + member.user.id + '> !');
 });
 
 //Purge des messages
@@ -46,5 +46,7 @@ bot.on('message', (msg) => {
 });
 */
 
-
-bot.login('test');
+var texte = fs.readFile('config/token.txt', 'utf-8', (err, data) => {
+    if(err) throw err;
+    bot.login(data);
+});
