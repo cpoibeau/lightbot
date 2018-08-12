@@ -22,4 +22,4 @@ Moreover, I'm thinking about create a website with a kind of documentation or co
 Don't hesitate to Watch or Star my Github repository to follow the progresses of my project 
 
 ---------------------
-If you reuse the source code please mae sure to respect the terms of the license : mention my Github profile !
+If you reuse the source code please make sure to respect the terms of the license : mention my Github profile !
