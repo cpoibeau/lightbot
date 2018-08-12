@@ -14,6 +14,7 @@ bot.on('ready', () => {
 });
 
 //Modification du préfixe
+/*
 bot.on('message', (msg) => {
     if(msg.content.includes(prefix + 'setPrefix')){
         let parsedString = msg.content.split(' ');
@@ -21,7 +22,7 @@ bot.on('message', (msg) => {
         msg.channel.send(`Bot prefix has been set to : ${prefix}`)
     }
 })
-
+*/
 //Ping
 bot.on('message', (msg) => {
     if(msg.content.includes(prefix + 'ping')){
@@ -32,7 +33,7 @@ bot.on('message', (msg) => {
 //Message de bienvenue
 bot.on('guildMemberAdd', (member) => {
     member.send('Bienenue sur le serveur ' + member.user.username + ' !');
-    member.guild.channels.get('477948088233754624').send('Bienvenue sur le serveur <@' + member.user.id + '> !');
+    member.guild.channels.get('478166745669173271').send('Bienvenue sur le serveur <@' + member.user.id + '> !');
 });
 
 //Purge des messages
@@ -46,4 +47,4 @@ bot.on('message', (msg) => {
 */
 
 
-bot.login('NDc3ODgwNTQzODU4MzkzMTI4.DlDWmg.y0HjHNMdr76pcU2kcoeWk-tHJRk');
+bot.login('test');
