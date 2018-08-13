@@ -10,8 +10,8 @@ Please don't hesitate to report any issues with it in [issues](https://github.co
 ## Features
 This bot contains :
 
-- 3 public commands
-- 4 admin-only commands
+- 4 public commands
+- 3 admin-only commands
 - Welcome message
 
 ---------------------

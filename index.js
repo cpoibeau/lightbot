@@ -3,13 +3,13 @@ const Connection = require('./config/connection.js');
 let client = new Discord.Client();
 let connection = new Connection();
 
-var prefix = 'lb-';
+let prefix = 'lb-';
+let welcomeChannel;
 
 // Ready + liste des seveurs
 client.on('ready', () => {
-    console.log('Je suis pret');
-    let guildsId = Array.from(client.guilds.keys());
-    guildsId.forEach((element) => {
+    console.log('Ready !');
+    Array.from(client.guilds.keys()).forEach((element) => {
         console.log(`> ${client.guilds.get(element).name}`);
     });
     client.user.setActivity(`Say ${prefix}help for help !`, {
@@ -19,22 +19,21 @@ client.on('ready', () => {
 });
 
 function adminCheckFromMsg(msg){
-    return msg.guild.members.get(msg.author.id).hasPermission('MANAGE_CHANNELS') || msg.guild.members.get(msg.author.id).hasPermission('MANAGE_GUILD');
+    let member2Check = msg.guild.members.get(msg.author.id);
+    return member2Check.hasPermission('MANAGE_CHANNELS') || member2Check.hasPermission('MANAGE_GUILD');
 }
 
 // Commands
 client.on('message', (msg) => {
     if (msg.author != client.user) {
         let reg = new RegExp('^' + prefix, 'i');
-        console.log(reg);
-        console.log(msg.content);
         if (msg.content.includes(prefix + 'help')) { // help
             msg.channel.send(
                 `\`${prefix}help\` - Display help\n` +
                 `\`${prefix}ping\` - Answer "pong !"\n` +
                 `\`${prefix}population\` - Display the current member count of this Discord server\n` +
-                `\`${prefix}purge <number>\` - *(admin)* Delete the lasts messages on the current channel\n` +
                 `\`${prefix}search <your-search>\` - Search on google\n` +
+                `\`${prefix}purge <number>\` - *(admin)* Delete the lasts messages on the current channel\n` +
                 `\`${prefix}setPrefix <prefix>\` - *(admin)* Changes the bot's command prefix\n` +
                 `\`${prefix}exit\` - *(admin)* Disable the bot from the server until it's rebooted`
             );
@@ -47,11 +46,11 @@ client.on('message', (msg) => {
             msg.channel.send(`http://google.com/search?q=${search}`);
 
         } else if (msg.content.includes(prefix + 'population')){    // population
-            msg.channel.send(`There are ${msg.guild.memberCount} members on this Discord server`)
+            msg.channel.send(`There are ${msg.guild.memberCount} members on this Discord server`);
 
         } else if(adminCheckFromMsg(msg)) { // admin commands
             if (msg.content.includes(prefix + 'setPrefix')) {   // setPrefix
-                let regex = /([!?:�;,*%$��_-]{1,2})|([\S]{1,4}-)/i;
+                let regex = /([!?:;,*%$_-]{1,2})|([\S]{1,4}-)/i;
                 if(regex.test(msg.content.split(' ')[1])){
                     prefix = regex.exec(msg.content.split(' ')[1])[0];
                     msg.channel.send(`Bot prefix has been set to : ${prefix}`);
@@ -60,7 +59,8 @@ client.on('message', (msg) => {
                         type: 'PLAYING'
                     });
                 } else {
-                    msg.channel.send(`Bot prefix has not been changed :/\nPlease read the documentation here :`); //TODO:insert a link here
+                    msg.channel.send(`Bot prefix has not been changed :/`);
+                    //TODO:insert a link to the documentation here
                 }
             } else if (msg.content === prefix + 'exit') {   // exit
                 msg.delete();
@@ -74,6 +74,8 @@ client.on('message', (msg) => {
                     console.log(`${a} messages deleted`);
                 }).catch(console.error);
                 
+            } else if (msg.content.includes(prefix + 'setWelcomeChannel')) {    // setWelcomeChannel
+                welcomeChannel = msg.guild.channels.find('name', msg.content.split(' ')[1]).id;
             } else if(reg.test(msg.content)){
                 msg.channel.send("Command not found :/");
             }
@@ -87,7 +89,9 @@ client.on('message', (msg) => {
 // Welcome message
 client.on('guildMemberAdd', (member) => {
     member.send('Bienenue sur le serveur ' + member.user.username + ' !');
-    member.guild.channels.get('478174436466622465').send('Bienvenue sur le serveur <@' + member.user.id + '> !');
+    if(welcomeChannel){
+        member.guild.channels.get(welcomeChannel).send('Bienvenue sur le serveur <@' + member.user.id + '> !');
+    }
 });
 
 client.login(connection.token);
