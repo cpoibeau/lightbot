@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const Connection = require('./config/connection.js');
+const TextCommand = require('./src/commands.js');
 let client = new Discord.Client();
 let connection = new Connection();
 
@@ -25,65 +26,40 @@ function adminCheckFromMsg(msg){
 
 // Commands
 client.on('message', (msg) => {
-    if (msg.author != client.user) {
-        let reg = new RegExp('^' + prefix, 'i');
-        if (msg.content.includes(prefix + 'help')) { // help
-            msg.channel.send(
-                `\`${prefix}help\` - Display help\n` +
-                `\`${prefix}ping\` - Answer "pong !"\n` +
-                `\`${prefix}population\` - Display the current member count of this Discord server\n` +
-                `\`${prefix}search <your-search>\` - Search on google\n` +
-                `\`${prefix}purge <number>\` - *(admin)* Delete the lasts messages on the current channel\n` +
-                `\`${prefix}setPrefix <prefix>\` - *(admin)* Changes the bot's command prefix\n` +
-                `\`${prefix}exit\` - *(admin)* Disable the bot from the server until it's rebooted`
-            );
+  if (msg.author != client.user) {
+    let command = new TextCommand(prefix, msg);
+    let reg = new RegExp('^' + prefix, 'i');
+    if (msg.content.includes(prefix + 'help')) { // help
+      command.help();
 
-        } else if (msg.content.includes(prefix + 'ping')) { // ping
-            msg.channel.send('`pong !`');
+    } else if (msg.content.includes(prefix + 'ping')) { // ping
+      command.ping();
+      
+    } else if (msg.content.includes(prefix + 'search')) {   // search
+      command.search();
 
-        } else if (msg.content.includes(prefix + 'search')) {   // search
-            let search = msg.content.slice(prefix.length + 'search '.length).replace(/ /g, '+');
-            msg.channel.send(`http://google.com/search?q=${search}`);
+    } else if (msg.content.includes(prefix + 'population')){    // population
+      command.population();
+    
+    } else if(adminCheckFromMsg(msg)) { // admin commands
+      if (msg.content.includes(prefix + 'setPrefix')) {   // setPrefix
+        prefix = command.setPrefix();
 
-        } else if (msg.content.includes(prefix + 'population')){    // population
-            msg.channel.send(`There are ${msg.guild.memberCount} members on this Discord server`);
+      } else if (msg.content.includes(prefix + 'purge')){ // purge
+        command.purge();
+      
+      } else if (msg.content.includes(prefix + 'setWelcomeChannel')) {    // setWelcomeChannel
+        welcomeChannel = command.setWelcomeChannel();
+        console.log(welcomeChannel);
 
-        } else if(adminCheckFromMsg(msg)) { // admin commands
-            if (msg.content.includes(prefix + 'setPrefix')) {   // setPrefix
-                let regex = /([!?:;,*%$_-]{1,2})|([\S]{1,4}-)/i;
-                if(regex.test(msg.content.split(' ')[1])){
-                    prefix = regex.exec(msg.content.split(' ')[1])[0];
-                    msg.channel.send(`Bot prefix has been set to : ${prefix}`);
-                    client.user.setActivity(`Say ${prefix}help for help !`, {
-                        url: 'https://discord.js.org',
-                        type: 'PLAYING'
-                    });
-                } else {
-                    msg.channel.send(`Bot prefix has not been changed :/`);
-                    //TODO:insert a link to the documentation here
-                }
-            } else if (msg.content === prefix + 'exit') {   // exit
-                msg.delete();
-                client.destroy();
-            } else if (msg.content.includes(prefix + 'purge')){ // purge
-                let a = Number(msg.content.split(' ')[1]) + 1;
-                msg.channel.fetchMessages({
-                    limit: a
-                }).then((messages) => {
-                    messages.deleteAll();
-                    console.log(`${a} messages deleted`);
-                }).catch(console.error);
-                
-            } else if (msg.content.includes(prefix + 'setWelcomeChannel')) {    // setWelcomeChannel
-                welcomeChannel = msg.guild.channels.find('name', msg.content.split(' ')[1]).id;
-            } else if(reg.test(msg.content)){
-                msg.channel.send("Command not found :/");
-            }
+      } else if(reg.test(msg.content)){
+        msg.channel.send("Command not found :/");
+      }
 
-        } else if(reg.test(msg.content)){
-            msg.channel.send("Command not found, you may not be allowed to use it :/");
-        }
+    } else if(reg.test(msg.content)){
+      msg.channel.send("Command not found, you may not be allowed to use it :/");
     }
+  }
 });
 
 // Welcome message
