@@ -46,6 +46,7 @@ client.on('message', (msg) => {
         command.population();
       
       } else if (msg.content.startsWith(prefix + 'userInfos')) {
+        msg.delete();
         command.userInfos();
 
       } else if(adminCheckFromMsg(msg)) { // admin commands
@@ -53,6 +54,7 @@ client.on('message', (msg) => {
           prefix = command.setPrefix();
 
         } else if (msg.content.startsWith(prefix + 'purge')){
+          msg.delete();
           command.purge();
         
         } else if (msg.content.startsWith(prefix + 'setWelcomeChannel')) {
@@ -79,9 +81,6 @@ client.on('message', (msg) => {
       } else if (msg.content.startsWith(prefix + 'setPrefix')) {
         prefix = command.setPrefix();
 
-      } else if (msg.content.startsWith(prefix + 'purge')){
-        command.purge();
-      
       } else if (msg.content.startsWith(prefix + 'userInfos')) {
         command.userInfos();
 
