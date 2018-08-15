@@ -9,7 +9,7 @@ module.exports = class TextCommand {
   help() {
     this.message.channel.send(new Discord.RichEmbed()
       .setTitle('LightBot Commands :')
-      .setColor('#f2ad16')
+      .setColor('#8f55c6')
       .setDescription(
         `\`${this.prefix}help\` - Display help\n` +
         `\`${this.prefix}ping\` - Answer "pong !"\n` +
@@ -20,7 +20,7 @@ module.exports = class TextCommand {
         `\`${this.prefix}setPrefix <prefix>\` - *(admin)* Changes the bot's command prefix\n` +
         `\`${this.prefix}setWelcomeChannel\` - *(admin)* Sets the channel where welcome messages will be diplayed\n`
       )
-      .setFooter(`Requested by : ${this.message.author.tag}`)
+      .setFooter('LightBot beta')
     );
   }
 
@@ -38,9 +38,10 @@ module.exports = class TextCommand {
   }
 
   userInfos(){
+    this.message.delete();
     let creationDate = this.message.author.createdAt.toString().split(' ');
     this.message.author.send(new Discord.RichEmbed()
-      .setColor('#f2ad16')
+      .setColor('#8f55c6')
       .setTitle('**Your profile :**')
       .setDescription(
         `Username : ${this.message.author.tag}\n` +
@@ -48,13 +49,18 @@ module.exports = class TextCommand {
         `Account creation date : ${creationDate[1]} ${creationDate[2]} ${creationDate[3]} at ${creationDate[4]}\n`
       )
       .setThumbnail(this.message.author.avatarURL)
-      .setFooter(`Requested by : ${this.message.author.tag}`)
+      .setFooter('LightBot beta')
     );
   }
 
   purge(){
-    if(!parseInt(this.message.content.split(' ')[1])) return this.message.channel.send('You must enter a number of messages to delete !');
-    this.message.channel.bulkDelete(parseInt(this.message.content.split(' ')[1])).catch(console.error);
+    let a = Number(this.message.content.split(' ')[1]) + 1;
+    this.message.channel.fetchMessages({
+        limit: a
+    }).then((messages) => {
+        messages.deleteAll();
+        console.log(`${a} messages deleted`);
+    }).catch(console.error);
   }
 
   setPrefix(){
