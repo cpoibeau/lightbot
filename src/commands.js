@@ -1,4 +1,4 @@
-
+const Discord = require('discord.js');
 
 module.exports = class TextCommand {
   constructor(prefix, msg){
@@ -7,15 +7,21 @@ module.exports = class TextCommand {
   }
 
   help() {
-    this.message.channel.send(
-      `\`${this.prefix}help\` - Display help\n` +
-      `\`${this.prefix}ping\` - Answer "pong !"\n` +
-      `\`${this.prefix}population\` - Display the current member count of this Discord server\n` +
-      `\`${this.prefix}search <your-search>\` - Search on google\n` +
-      `\`${this.prefix}purge <number>\` - *(admin)* Delete the lasts messages on the current channel\n` +
-      `\`${this.prefix}setPrefix <prefix>\` - *(admin)* Changes the bot's command prefix\n` +
-      `\`${this.prefix}exit\` - *(admin)* Disable the bot from the server until it's rebooted`
-  );
+    this.message.channel.send(new Discord.RichEmbed()
+      .setTitle('LightBot Commands :')
+      .setColor('#8f55c6')
+      .setDescription(
+        `\`${this.prefix}help\` - Display help\n` +
+        `\`${this.prefix}ping\` - Answer "pong !"\n` +
+        `\`${this.prefix}population\` - Display the current member count of this Discord server\n` +
+        `\`${this.prefix}search <your-search>\` - Search on google\n` +
+        `\`${this.prefix}userInfos\` - Send you a DM with additional informations about your account\n` +
+        `\`${this.prefix}purge <number>\` - *(admin)* Delete the lasts messages on the current channel\n` +
+        `\`${this.prefix}setPrefix <prefix>\` - *(admin)* Changes the bot's command prefix\n` +
+        `\`${this.prefix}setWelcomeChannel\` - *(admin)* Sets the channel where welcome messages will be diplayed\n`
+      )
+      .setFooter('LightBot beta')
+    );
   }
 
   ping(){
@@ -29,6 +35,22 @@ module.exports = class TextCommand {
 
   population(){
     this.message.channel.send(`There are ${this.message.guild.memberCount} members on this Discord server`);
+  }
+
+  userInfos(){
+    this.message.delete();
+    let creationDate = this.message.author.createdAt.toString().split(' ');
+    this.message.author.send(new Discord.RichEmbed()
+      .setColor('#8f55c6')
+      .setTitle('**Your profile :**')
+      .setDescription(
+        `Username : ${this.message.author.tag}\n` +
+        `ID : ${this.message.author.id}\n` +
+        `Account creation date : ${creationDate[1]} ${creationDate[2]} ${creationDate[3]} at ${creationDate[4]}\n`
+      )
+      .setThumbnail(this.message.author.avatarURL)
+      .setFooter('LightBot beta')
+    );
   }
 
   purge(){
