@@ -9,7 +9,7 @@ module.exports = class TextCommand {
   help() {
     this.message.channel.send(new Discord.RichEmbed()
       .setTitle('LightBot Commands :')
-      .setColor('#8f55c6')
+      .setColor('#f2ad16')
       .setDescription(
         `\`${this.prefix}help\` - Display help\n` +
         `\`${this.prefix}ping\` - Answer "pong !"\n` +
@@ -20,7 +20,7 @@ module.exports = class TextCommand {
         `\`${this.prefix}setPrefix <prefix>\` - *(admin)* Changes the bot's command prefix\n` +
         `\`${this.prefix}setWelcomeChannel\` - *(admin)* Sets the channel where welcome messages will be diplayed\n`
       )
-      .setFooter('LightBot beta')
+      .setFooter(`Requested by : ${this.message.author.tag}`)
     );
   }
 
@@ -41,7 +41,7 @@ module.exports = class TextCommand {
     this.message.delete();
     let creationDate = this.message.author.createdAt.toString().split(' ');
     this.message.author.send(new Discord.RichEmbed()
-      .setColor('#8f55c6')
+      .setColor('#f2ad16')
       .setTitle('**Your profile :**')
       .setDescription(
         `Username : ${this.message.author.tag}\n` +
@@ -49,7 +49,7 @@ module.exports = class TextCommand {
         `Account creation date : ${creationDate[1]} ${creationDate[2]} ${creationDate[3]} at ${creationDate[4]}\n`
       )
       .setThumbnail(this.message.author.avatarURL)
-      .setFooter('LightBot beta')
+      .setFooter(`Requested by : ${this.message.author.tag}`)
     );
   }
 
@@ -71,6 +71,7 @@ module.exports = class TextCommand {
       return this.prefix;
     } else {
       this.message.channel.send('Bot prefix has not been changed :/');
+      return this.prefix;
     }
   }
 
