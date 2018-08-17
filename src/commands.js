@@ -55,12 +55,8 @@ module.exports = class TextCommand {
 
   purge(){
     let a = Number(this.message.content.split(' ')[1]) + 1;
-    this.message.channel.fetchMessages({
-        limit: a
-    }).then((messages) => {
-        messages.deleteAll();
-        console.log(`${a} messages deleted`);
-    }).catch(console.error);
+    this.message.channel.bulkDelete(a)
+    .catch(console.error);
   }
 
   setPrefix(){
