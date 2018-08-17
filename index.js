@@ -86,8 +86,6 @@ client.on('message', (msg) => {
 
       } else if (reg.test(msg.content)){
         msg.channel.send("Command not found, you may have entered a command only available on a Discord server :/");
-      } else if (test){
-        console.log('test');
       }
     }
   }
