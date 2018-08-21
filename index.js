@@ -1,8 +1,11 @@
 const Discord = require('discord.js');
 const Connection = require('./config/connection.js');
 const TextCommand = require('./src/commands.js');
+
 let client = new Discord.Client();
 let connection = new Connection();
+
+connection.sqlConnection();
 
 let prefix = 'lb-';
 let welcomeChannel;
