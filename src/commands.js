@@ -1,4 +1,7 @@
 const Discord = require('discord.js');
+const Connection = require('../config/connection.js');
+
+let db = new Connection().sqlConnection();
 
 module.exports = class TextCommand {
   constructor(prefix, msg){
@@ -64,6 +67,7 @@ module.exports = class TextCommand {
     if(regex.test(this.message.content.split(' ')[1])){
       this.prefix = regex.exec(this.message.content.split(' ')[1])[0];
       this.message.channel.send(`Bot prefix has been set to : ${this.prefix}`);
+      db.query(`UPDATE guilds SET prefix='${this.prefix}' WHERE discord_id='${this.message.guild.id}'`);
       return this.prefix;
     } else {
       this.message.channel.send('Bot prefix has not been changed :/');

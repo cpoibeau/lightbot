@@ -5,23 +5,32 @@ const TextCommand = require('./src/commands.js');
 let client = new Discord.Client();
 let connection = new Connection();
 
-connection.sqlConnection();
+let db = connection.sqlConnection();
 
-let prefix = 'lb-';
-let welcomeChannel;
+//Database connection
+db.connect((err) => {
+  if(err) throw err;
+  console.log('Connection with batabase etablished !');
+});
 
 // Ready + liste des seveurs
 client.on('ready', () => {
   console.log('Ready !');
   Array.from(client.guilds.keys()).forEach((element) => {
-    console.log(`> ${client.guilds.get(element).name}`);
+    let guild = client.guilds.get(element);
+    let parsed_date = guild.createdAt.toJSON().replace('T', ' ').split('.')[0];
+    db.query(`INSERT INTO guilds (discord_id, name, creation_date) VALUES (${guild.id}, '${guild.name}', '${parsed_date}') `+
+    `ON DUPLICATE KEY UPDATE name='${guild.name}', last_connexion=NOW();`);
+
   });
-  client.user.setActivity(`Say ${prefix}help for help !`, {
+  client.user.setActivity(`Say lb-help for help !`, {
     url: 'https://discord.js.org',
     type: 'PLAYING'
   });
 });
 
+let prefix;
+let welcomeChannel;
 
 function adminCheckFromMsg(msg){
   let member2Check = msg.guild.members.get(msg.author.id);
@@ -30,68 +39,73 @@ function adminCheckFromMsg(msg){
 
 // Commands
 client.on('message', (msg) => {
-  let command = new TextCommand(prefix, msg);
-  let reg = new RegExp('^' + prefix, 'i');
+  db.query(`SELECT prefix FROM guilds WHERE discord_id=${msg.guild.id};`, (err, result) => {
+    if (err) throw err;
 
-  if (!msg.author.bot) {
-    if (msg.guild != undefined){   // Guild commands
-      if (msg.content.startsWith(prefix + 'help')) {
-        command.help();
+    prefix = result[0].prefix;
+    let command = new TextCommand(prefix, msg);
+    let reg = new RegExp('^' + prefix, 'i');
 
-      } else if (msg.content.startsWith(prefix + 'ping')) {
-        command.ping();
+    if (!msg.author.bot) {
+      if (msg.guild != undefined){   // Guild commands
+        if (msg.content.startsWith(prefix + 'help')) {
+          command.help();
 
-      } else if (msg.content.startsWith(prefix + 'search')) {
-        command.search();
+        } else if (msg.content.startsWith(prefix + 'ping')) {
+          command.ping();
 
-      } else if (msg.content.startsWith(prefix + 'population')){
-        command.population();
+        } else if (msg.content.startsWith(prefix + 'search')) {
+          command.search();
 
-      } else if (msg.content.startsWith(prefix + 'userInfos')) {
-        command.userInfos();
+        } else if (msg.content.startsWith(prefix + 'population')){
+          command.population();
 
-      } else if (adminCheckFromMsg(msg)) { // admin commands
-        if (msg.content.startsWith(prefix + 'setPrefix')) {
+        } else if (msg.content.startsWith(prefix + 'userInfos')) {
+          command.userInfos();
+
+        } else if (adminCheckFromMsg(msg)) { // admin commands
+          if (msg.content.startsWith(prefix + 'setPrefix')) {
+            prefix = command.setPrefix();
+
+          } else if (msg.content.startsWith(prefix + 'purge')){
+            command.purge();
+
+          } else if (msg.content.startsWith(prefix + 'setWelcomeChannel')) {
+            welcomeChannel = command.setWelcomeChannel();
+
+          } else if (reg.test(msg.content)){
+            msg.channel.send("Command not found :/");
+          }
+
+        } else if (reg.test(msg.content)){
+          msg.channel.send("Command not found, you may not be allowed to use it :/");
+        }
+
+      } else {  // DM commands
+        if (msg.content.startsWith(prefix + 'help')) {
+          command.help();
+
+        } else if (msg.content.startsWith(prefix + 'ping')) {
+          command.ping();
+
+        } else if (msg.content.startsWith(prefix + 'search')) {
+          command.search();
+
+        } else if (msg.content.startsWith(prefix + 'setPrefix')) {
           prefix = command.setPrefix();
 
         } else if (msg.content.startsWith(prefix + 'purge')){
           command.purge();
 
-        } else if (msg.content.startsWith(prefix + 'setWelcomeChannel')) {
-          welcomeChannel = command.setWelcomeChannel();
+        } else if (msg.content.startsWith(prefix + 'userInfos')) {
+          command.userInfos();
 
         } else if (reg.test(msg.content)){
-          msg.channel.send("Command not found :/");
+          msg.channel.send("Command not found, you may have entered a command only available on a Discord server :/");
         }
-
-      } else if (reg.test(msg.content)){
-        msg.channel.send("Command not found, you may not be allowed to use it :/");
-      }
-
-    } else {  // DM commands
-      if (msg.content.startsWith(prefix + 'help')) {
-        command.help();
-
-      } else if (msg.content.startsWith(prefix + 'ping')) {
-        command.ping();
-
-      } else if (msg.content.startsWith(prefix + 'search')) {
-        command.search();
-
-      } else if (msg.content.startsWith(prefix + 'setPrefix')) {
-        prefix = command.setPrefix();
-
-      } else if (msg.content.startsWith(prefix + 'purge')){
-        command.purge();
-
-      } else if (msg.content.startsWith(prefix + 'userInfos')) {
-        command.userInfos();
-
-      } else if (reg.test(msg.content)){
-        msg.channel.send("Command not found, you may have entered a command only available on a Discord server :/");
       }
     }
-  }
+  });
 });
 
 // Welcome message
@@ -106,4 +120,4 @@ client.on('error', (err) => {
   console.error(err);
 })
 
-client.login(connection.token);
+client.login(connection.betaToken);
