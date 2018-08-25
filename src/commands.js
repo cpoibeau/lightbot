@@ -68,10 +68,8 @@ module.exports = class TextCommand {
       this.prefix = regex.exec(this.message.content.split(' ')[1])[0];
       this.message.channel.send(`Bot prefix has been set to : ${this.prefix}`);
       db.query(`UPDATE guilds SET prefix='${this.prefix}' WHERE discord_id='${this.message.guild.id}'`);
-      return this.prefix;
     } else {
       this.message.channel.send('Bot prefix has not been changed :/');
-      return this.prefix;
     }
   }
 
@@ -81,7 +79,7 @@ module.exports = class TextCommand {
 
       if(welcomeChannel){
         this.message.channel.send(`Welcome messages channel has been set to : ${welcomeChannel.name}`);
-        return welcomeChannel.id;
+        db.query(`UPDATE guilds SET welcomeChannel='${welcomeChannel.id}' WHERE discord_id='${this.message.guild.id};`);
 
       } else {
         this.message.channel.send(`There is no channel "${this.message.content.split(' ')[1]}"`);

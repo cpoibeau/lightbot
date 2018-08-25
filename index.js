@@ -29,9 +29,6 @@ client.on('ready', () => {
   });
 });
 
-let prefix;
-let welcomeChannel;
-
 function adminCheckFromMsg(msg){
   let member2Check = msg.guild.members.get(msg.author.id);
   return member2Check.hasPermission('MANAGE_CHANNELS') || member2Check.hasPermission('MANAGE_GUILD');
@@ -39,15 +36,18 @@ function adminCheckFromMsg(msg){
 
 // Commands
 client.on('message', (msg) => {
-  db.query(`SELECT prefix FROM guilds WHERE discord_id=${msg.guild.id};`, (err, result) => {
-    if (err) throw err;
+  if (!msg.author.bot) {
 
-    prefix = result[0].prefix;
+    let prefix = 'lb-';
     let command = new TextCommand(prefix, msg);
     let reg = new RegExp('^' + prefix, 'i');
 
-    if (!msg.author.bot) {
-      if (msg.guild != undefined){   // Guild commands
+    if (msg.guild != undefined){   // Guild commands
+      db.query(`SELECT prefix FROM guilds WHERE discord_id=${msg.guild.id};`, (err, result) => {
+        if (err) throw err;
+
+        prefix = result[0].prefix;
+
         if (msg.content.startsWith(prefix + 'help')) {
           command.help();
 
@@ -65,13 +65,13 @@ client.on('message', (msg) => {
 
         } else if (adminCheckFromMsg(msg)) { // admin commands
           if (msg.content.startsWith(prefix + 'setPrefix')) {
-            prefix = command.setPrefix();
+            command.setPrefix();
 
           } else if (msg.content.startsWith(prefix + 'purge')){
             command.purge();
 
           } else if (msg.content.startsWith(prefix + 'setWelcomeChannel')) {
-            welcomeChannel = command.setWelcomeChannel();
+            command.setWelcomeChannel();
 
           } else if (reg.test(msg.content)){
             msg.channel.send("Command not found :/");
@@ -80,8 +80,10 @@ client.on('message', (msg) => {
         } else if (reg.test(msg.content)){
           msg.channel.send("Command not found, you may not be allowed to use it :/");
         }
+      });
 
       } else {  // DM commands
+        let prefix = 'lb-';
         if (msg.content.startsWith(prefix + 'help')) {
           command.help();
 
@@ -91,12 +93,6 @@ client.on('message', (msg) => {
         } else if (msg.content.startsWith(prefix + 'search')) {
           command.search();
 
-        } else if (msg.content.startsWith(prefix + 'setPrefix')) {
-          prefix = command.setPrefix();
-
-        } else if (msg.content.startsWith(prefix + 'purge')){
-          command.purge();
-
         } else if (msg.content.startsWith(prefix + 'userInfos')) {
           command.userInfos();
 
@@ -104,16 +100,18 @@ client.on('message', (msg) => {
           msg.channel.send("Command not found, you may have entered a command only available on a Discord server :/");
         }
       }
-    }
-  });
+  }
 });
 
 // Welcome message
 client.on('guildMemberAdd', (member) => {
   member.send(`Bienenue sur le serveur ${member.user.username} !`);
-  if (welcomeChannel){
-    member.guild.channels.get(welcomeChannel).send('Bienvenue sur le serveur <@' + member.user.id + '> !');
-  }
+  db.query(`SELECT welcomeChannel FROM guilds WHERE discord_id='${member.guild.id}'`, (err, result) => {
+    if (err) throw err;
+    if (result){
+      member.guild.channels.get(result[0].welcomeChannel).send('Bienvenue sur le serveur <@' + member.user.id + '> !');
+    }
+  });
 });
 
 client.on('error', (err) => {
