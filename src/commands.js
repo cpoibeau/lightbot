@@ -63,7 +63,7 @@ module.exports = class TextCommand {
   }
 
   setPrefix(){
-    let regex = /([!:;,%_-]{1,2})|([\S]{1,4}-)/i;
+    let regex = /([!:;,%_-]{1,2})|([\w\d]{1,4}-)/i;
     if(regex.test(this.message.content.split(' ')[1])){
       this.prefix = regex.exec(this.message.content.split(' ')[1])[0];
       this.message.channel.send(`Bot prefix has been set to : ${this.prefix}`);
@@ -79,7 +79,7 @@ module.exports = class TextCommand {
 
       if(welcomeChannel){
         this.message.channel.send(`Welcome messages channel has been set to : ${welcomeChannel.name}`);
-        db.query(`UPDATE guilds SET welcomeChannel='${welcomeChannel.id}' WHERE discord_id='${this.message.guild.id};`);
+        db.query(`UPDATE guilds SET welcomeChannel='${welcomeChannel.id}' WHERE discord_id='${this.message.guild.id}';`);
 
       } else {
         this.message.channel.send(`There is no channel "${this.message.content.split(' ')[1]}"`);
