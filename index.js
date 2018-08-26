@@ -19,7 +19,7 @@ client.on('ready', () => {
   Array.from(client.guilds.keys()).forEach((element) => {
     let guild = client.guilds.get(element);
     let parsed_date = guild.createdAt.toJSON().replace('T', ' ').split('.')[0];
-    db.query(`INSERT INTO guilds (discord_id, name, creation_date) VALUES (${guild.id}, '${guild.name}', '${parsed_date}') `+
+    db.query(`INSERT INTO guilds (discord_id, name, creation_date) VALUES ('${guild.id}', '${guild.name}', '${parsed_date}') `+
     `ON DUPLICATE KEY UPDATE name='${guild.name}', last_connexion=NOW();`);
 
   });
@@ -37,16 +37,17 @@ function adminCheckFromMsg(msg){
 // Commands
 client.on('message', (msg) => {
   if (!msg.author.bot) {
-
-    let prefix = 'lb-';
-    let command = new TextCommand(prefix, msg);
-    let reg = new RegExp('^' + prefix, 'i');
+    let command;
+    let reg;
+    let prefix;
 
     if (msg.guild != undefined){   // Guild commands
       db.query(`SELECT prefix FROM guilds WHERE discord_id=${msg.guild.id};`, (err, result) => {
         if (err) throw err;
 
         prefix = result[0].prefix;
+        command = new TextCommand(prefix, msg);
+        reg = new RegExp('^' + prefix, 'i');
 
         if (msg.content.startsWith(prefix + 'help')) {
           command.help();
@@ -83,7 +84,10 @@ client.on('message', (msg) => {
       });
 
       } else {  // DM commands
-        let prefix = 'lb-';
+        prefix = 'lb-';
+        command = new TextCommand(prefix, msg);
+        reg = new RegExp('^' + prefix, 'i');
+        
         if (msg.content.startsWith(prefix + 'help')) {
           command.help();
 
@@ -118,4 +122,4 @@ client.on('error', (err) => {
   console.error(err);
 })
 
-client.login(connection.betaToken);
+client.login(connection.token);
