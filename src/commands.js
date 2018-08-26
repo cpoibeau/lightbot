@@ -1,4 +1,7 @@
 const Discord = require('discord.js');
+const Connection = require('../config/connection.js');
+
+let db = new Connection().sqlConnection();
 
 module.exports = class TextCommand {
   constructor(prefix, msg){
@@ -38,7 +41,9 @@ module.exports = class TextCommand {
   }
 
   userInfos(){
-    this.message.delete();
+    this.message.delete().catch(err => {
+      console.error(err);
+    });
     let creationDate = this.message.author.createdAt.toString().split(' ');
     this.message.author.send(new Discord.RichEmbed()
       .setColor('#f2ad16')
@@ -55,23 +60,18 @@ module.exports = class TextCommand {
 
   purge(){
     let a = Number(this.message.content.split(' ')[1]) + 1;
-    this.message.channel.fetchMessages({
-        limit: a
-    }).then((messages) => {
-        messages.deleteAll();
-        console.log(`${a} messages deleted`);
-    }).catch(console.error);
+    this.message.channel.bulkDelete(a)
+    .catch(console.error);
   }
 
   setPrefix(){
-    let regex = /([!:;,%_-]{1,2})|([\S]{1,4}-)/i;
+    let regex = /([!:;,%_-]{1,2})|([\w\d]{1,4}-)/i;
     if(regex.test(this.message.content.split(' ')[1])){
       this.prefix = regex.exec(this.message.content.split(' ')[1])[0];
       this.message.channel.send(`Bot prefix has been set to : ${this.prefix}`);
-      return this.prefix;
+      db.query(`UPDATE guilds SET prefix='${this.prefix}' WHERE discord_id='${this.message.guild.id}'`);
     } else {
       this.message.channel.send('Bot prefix has not been changed :/');
-      return this.prefix;
     }
   }
 
@@ -81,7 +81,7 @@ module.exports = class TextCommand {
 
       if(welcomeChannel){
         this.message.channel.send(`Welcome messages channel has been set to : ${welcomeChannel.name}`);
-        return welcomeChannel.id;
+        db.query(`UPDATE guilds SET welcomeChannel='${welcomeChannel.id}' WHERE discord_id='${this.message.guild.id}';`);
 
       } else {
         this.message.channel.send(`There is no channel "${this.message.content.split(' ')[1]}"`);
