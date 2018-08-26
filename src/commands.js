@@ -41,7 +41,9 @@ module.exports = class TextCommand {
   }
 
   userInfos(){
-    this.message.delete();
+    this.message.delete().catch(err => {
+      console.error(err);
+    });
     let creationDate = this.message.author.createdAt.toString().split(' ');
     this.message.author.send(new Discord.RichEmbed()
       .setColor('#f2ad16')
