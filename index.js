@@ -74,6 +74,9 @@ client.on('message', (msg) => {
           } else if (msg.content.startsWith(prefix + 'setWelcomeChannel')) {
             command.setWelcomeChannel();
 
+          } else if (msg.content.startsWith(prefix + 'setWelcomeMessage')){
+            command.setWelcomeMessage();
+
           } else if (reg.test(msg.content)){
             msg.channel.send("Command not found :/");
           }
@@ -87,7 +90,7 @@ client.on('message', (msg) => {
         prefix = 'lb-';
         command = new TextCommand(prefix, msg);
         reg = new RegExp('^' + prefix, 'i');
-        
+
         if (msg.content.startsWith(prefix + 'help')) {
           command.help();
 
@@ -109,11 +112,11 @@ client.on('message', (msg) => {
 
 // Welcome message
 client.on('guildMemberAdd', (member) => {
-  member.send(`Bienenue sur le serveur ${member.user.username} !`);
+  member.send(`Welcome on ${member.guild.name}, ${member.user.username} !`);
   db.query(`SELECT welcomeChannel FROM guilds WHERE discord_id='${member.guild.id}'`, (err, result) => {
     if (err) throw err;
     if (result){
-      member.guild.channels.get(result[0].welcomeChannel).send('Bienvenue sur le serveur <@' + member.user.id + '> !');
+      member.guild.channels.get(result[0].welcomeChannel).send('Welcome on our server <@' + member.user.id + '> !');
     }
   });
 });
@@ -122,4 +125,4 @@ client.on('error', (err) => {
   console.error(err);
 })
 
-client.login(connection.token);
+client.login(connection.betaToken);

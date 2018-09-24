@@ -60,8 +60,12 @@ module.exports = class TextCommand {
 
   purge(){
     let a = Number(this.message.content.split(' ')[1]) + 1;
-    this.message.channel.bulkDelete(a)
-    .catch(console.error);
+    if (a && a <= 100) {
+      this.message.channel.bulkDelete(a)
+      .catch(console.error);
+    } else {
+      this.message.channel.send('You did not enter a valid number');
+    }
   }
 
   setPrefix(){
@@ -89,6 +93,18 @@ module.exports = class TextCommand {
 
     } else {
       this.message.channel.send('You did not enter channel name');
+    }
+  }
+
+  setWelcomeMessage(){
+    if (this.message.content.slice((this.prefix.length + 'setWelcomeMessage '.length))){
+      let welcomeMessage = this.message.content.slice((this.prefix.length + 'setWelcomeMessage '.length));
+      
+      db.query(`UPDATE guilds SET welcomeMessage='${welcomeMessage}' WHERE discord_id='${this.message.guild.id}';`);
+      this.message.channel.send(`Welcome message has been set to : ${welcomeMessage}`)
+
+    } else {
+      this.message.channel.send(' You did not enter welcome message');
     }
   }
 }
