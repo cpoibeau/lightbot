@@ -115,7 +115,7 @@ module.exports = class TextCommand {
 
     let result = new Date(current_date.getTime()-date_test.getTime());
 
-    console.log(`Temps écoulé depuis le ${date_test.getDate()}/${date_test.getMonth() + 1}/${date_test.getFullYear()} à ${date_test.getHours()}:${date_test.getMinutes()}0 : ` +
+    this.message.channel.send(`Temps écoulé depuis le ${date_test.getDate()}/${date_test.getMonth() + 1}/${date_test.getFullYear()} à ${date_test.getHours()}:${date_test.getMinutes()}0 : ` +
     `${result.getDate() - 1} jours, ${result.getHours() - 1} heures, ${result.getMinutes()} minutes et ${result.getSeconds()} secondes.`)
   }
 }
