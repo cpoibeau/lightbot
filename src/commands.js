@@ -60,8 +60,12 @@ module.exports = class TextCommand {
 
   purge(){
     let a = Number(this.message.content.split(' ')[1]) + 1;
-    this.message.channel.bulkDelete(a)
-    .catch(console.error);
+    if (a && a <= 100) {
+      this.message.channel.bulkDelete(a)
+      .catch(console.error);
+    } else {
+      this.message.channel.send('You did not enter a valid number');
+    }
   }
 
   setPrefix(){
@@ -90,5 +94,28 @@ module.exports = class TextCommand {
     } else {
       this.message.channel.send('You did not enter channel name');
     }
+  }
+
+  setWelcomeMessage(){
+    if (this.message.content.slice((this.prefix.length + 'setWelcomeMessage '.length))){
+      let welcomeMessage = this.message.content.slice((this.prefix.length + 'setWelcomeMessage '.length));
+      
+      db.query(`UPDATE guilds SET welcomeMessage='${welcomeMessage}' WHERE discord_id='${this.message.guild.id}';`);
+      this.message.channel.send(`Welcome message has been set to : ${welcomeMessage}`)
+
+    } else {
+      this.message.channel.send(' You did not enter welcome message');
+    }
+  }
+  
+  time(){
+    let date_test = new Date('2018-10-14T12:00:00');
+    let current_date = new Date();
+
+
+    let result = new Date(current_date.getTime()-date_test.getTime());
+
+    console.log(`Temps écoulé depuis le ${date_test.getDate()}/${date_test.getMonth() + 1}/${date_test.getFullYear()} à ${date_test.getHours()}:${date_test.getMinutes()}0 : ` +
+    `${result.getDate() - 1} jours, ${result.getHours() - 1} heures, ${result.getMinutes()} minutes et ${result.getSeconds()} secondes.`)
   }
 }

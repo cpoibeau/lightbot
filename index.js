@@ -64,6 +64,9 @@ client.on('message', (msg) => {
         } else if (msg.content.startsWith(prefix + 'userInfos')) {
           command.userInfos();
 
+        } else if (msg.content.startsWith(prefix + 'time')) {
+          command.time();
+
         } else if (adminCheckFromMsg(msg)) { // admin commands
           if (msg.content.startsWith(prefix + 'setPrefix')) {
             command.setPrefix();
@@ -73,6 +76,9 @@ client.on('message', (msg) => {
 
           } else if (msg.content.startsWith(prefix + 'setWelcomeChannel')) {
             command.setWelcomeChannel();
+
+          } else if (msg.content.startsWith(prefix + 'setWelcomeMessage')){
+            command.setWelcomeMessage();
 
           } else if (reg.test(msg.content)){
             msg.channel.send("Command not found :/");
@@ -87,7 +93,7 @@ client.on('message', (msg) => {
         prefix = 'lb-';
         command = new TextCommand(prefix, msg);
         reg = new RegExp('^' + prefix, 'i');
-        
+
         if (msg.content.startsWith(prefix + 'help')) {
           command.help();
 
@@ -100,20 +106,23 @@ client.on('message', (msg) => {
         } else if (msg.content.startsWith(prefix + 'userInfos')) {
           command.userInfos();
 
+        } else if (msg.content.startsWith(prefix + 'time')) {
+          command.time();
+
         } else if (reg.test(msg.content)){
           msg.channel.send("Command not found, you may have entered a command only available on a Discord server :/");
-        }
+        } 
       }
   }
 });
 
 // Welcome message
 client.on('guildMemberAdd', (member) => {
-  member.send(`Bienenue sur le serveur ${member.user.username} !`);
+  member.send(`Welcome on ${member.guild.name}, ${member.user.username} !`);
   db.query(`SELECT welcomeChannel FROM guilds WHERE discord_id='${member.guild.id}'`, (err, result) => {
     if (err) throw err;
     if (result){
-      member.guild.channels.get(result[0].welcomeChannel).send('Bienvenue sur le serveur <@' + member.user.id + '> !');
+      member.guild.channels.get(result[0].welcomeChannel).send('Welcome on our server <@' + member.user.id + '> !');
     }
   });
 });
@@ -122,4 +131,4 @@ client.on('error', (err) => {
   console.error(err);
 })
 
-client.login(connection.token);
+client.login(connection.betaToken);
