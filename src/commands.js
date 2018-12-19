@@ -65,7 +65,7 @@ module.exports = class TextCommand {
       .catch(console.error);
     } else {
       this.message.channel.send('You did not enter a valid number');
-    }
+    } //Ajouter une gestion d'exception lorsque les messages sélectionés sont datés de + de 14 jours
   }
 
   setPrefix(){
@@ -97,7 +97,7 @@ module.exports = class TextCommand {
   }
 
   setWelcomeMessage(){
-    if (this.message.content.slice((this.prefix.length + 'setWelcomeMessage '.length))){
+    if (this.message.content.slice(this.prefix.length + 'setWelcomeMessage '.length)){
       let welcomeMessage = this.message.content.slice((this.prefix.length + 'setWelcomeMessage '.length));
       
       db.query(`UPDATE guilds SET welcomeMessage='${welcomeMessage}' WHERE discord_id='${this.message.guild.id}';`);
@@ -117,5 +117,43 @@ module.exports = class TextCommand {
 
     this.message.channel.send(`Temps écoulé depuis le ${date_test.getDate()}/${date_test.getMonth() + 1}/${date_test.getFullYear()} à ${date_test.getHours()}:${date_test.getMinutes()}0 : ` +
     `${result.getDate() - 1} jours, ${result.getHours() - 1} heures, ${result.getMinutes()} minutes et ${result.getSeconds()} secondes.`)
+  }
+
+  bank(){
+    if(this.message.content.split(' ')[1]){
+      if(this.message.content.split(' ')[1] == 'createAccount'){
+        if(this.message.content.split(' ')[2]){
+          if(this.message.content.split(' ')[3]){
+            if(!isNaN(this.message.content.split(' ')[3])){
+              //TODO : Liaison DB
+            } else {
+              this.message.channel.send('You must enter a valid value');
+            }
+          } else {
+            this.message.channel.send('You did not enter a value');
+          }
+        } else {
+          this.message.channel.send('You did not enter a name');
+        }
+      } else if(this.message.content.split(' ')[1] == 'add'){
+        if(this.message.content.split(' ')[2]){
+          if(this.message.content.split(' ')[3]){
+            if(!isNaN(this.message.content.split(' ')[3])){
+              //TODO : Liaison DB
+            } else {
+              this.message.channel.send('You must enter a valid value');
+            }
+          } else {
+            this.message.channel.send('You did not enter a value');
+          }
+        } else {
+          this.message.channel.send('You did not enter a name');
+        }
+      } else {
+        this.message.channel.send('Your command is invalid');
+      }
+    } else {
+      this.message.channel.send('//AIDE COMMANDE BANK');
+    }
   }
 }

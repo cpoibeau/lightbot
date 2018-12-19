@@ -80,6 +80,9 @@ client.on('message', (msg) => {
           } else if (msg.content.startsWith(prefix + 'setWelcomeMessage')){
             command.setWelcomeMessage();
 
+          } else if (msg.content.startsWith(prefix + 'bank')){
+            command.bank();
+
           } else if (reg.test(msg.content)){
             msg.channel.send("Command not found :/");
           }
@@ -131,4 +134,4 @@ client.on('error', (err) => {
   console.error(err);
 })
 
-client.login(connection.token);
+client.login(connection.betaToken);
