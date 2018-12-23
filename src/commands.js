@@ -122,38 +122,68 @@ module.exports = class TextCommand {
   bank(){
     if(this.message.content.split(' ')[1]){
       if(this.message.content.split(' ')[1] == 'createAccount'){
+
         if(this.message.content.split(' ')[2]){
-          if(this.message.content.split(' ')[3]){
-            if(!isNaN(this.message.content.split(' ')[3])){
-              //TODO : Liaison DB
-            } else {
-              this.message.channel.send('You must enter a valid value');
-            }
+  
+          if(this.message.guild.members.find('displayName', this.message.content.split(' ')[2])){
+            let user = this.message.guild.members.find('displayName', this.message.content.split(' ')[2]);
+            db.query(`INSERT INTO users (discord_id, username, guild_id, guild_name) VALUES ('${user.id}', '${user.displayName}', '${this.message.guild.id}', '${this.message.guild.name}')`, (err)=> {
+              if(err){
+                this.message.channel.send('This account is already existing')
+              }
+            });
           } else {
-            this.message.channel.send('You did not enter a value');
+            this.message.channel.send('You must enter a valid name');
           }
         } else {
-          this.message.channel.send('You did not enter a name');
+          this.message.channel.send('You must enter an username');
         }
-      } else if(this.message.content.split(' ')[1] == 'add'){
+  
+      } else if(this.message.content.split(' ')[1] == 'add') {
+  
         if(this.message.content.split(' ')[2]){
-          if(this.message.content.split(' ')[3]){
-            if(!isNaN(this.message.content.split(' ')[3])){
-              //TODO : Liaison DB
+
+          if(this.message.guild.members.find('displayName', this.message.content.split(' ')[2])){
+
+            if(this.message.content.split(' ')[3]){
+
+              if(!isNaN(this.message.content.split(' ')[3])){
+                let user = this.message.guild.members.find('displayName', this.message.content.split(' ')[2]);
+
+                db.query(`SELECT balance FROM users WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}'`, (err, result)=>{
+                  if(err){
+                    this.message.channel.send('Failed to credit this user');
+
+                  } else if(result){
+                    let balance = parseInt(result[0].balance);
+                    let amount = balance + parseInt(this.message.content.split(' ')[3]);
+
+                    db.query(`UPDATE users SET balance=${amount} WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}'`, (err)=>{
+                      if(err){
+                        this.message.channel.send('Failed to credit this user');
+                      } else {
+                        this.message.channel.send(`This account has been successfully credited !\n Balance is now \`${amount}\``)
+                      }
+                    });
+                  }
+                });
+                
+              } else {
+                this.message.channel.send('You must enter a valid amount');
+              }
             } else {
-              this.message.channel.send('You must enter a valid value');
+              this.message.channel.send('You must enter an amount');
             }
           } else {
-            this.message.channel.send('You did not enter a value');
+            this.message.channel.send('You must enter a valid name');
           }
         } else {
-          this.message.channel.send('You did not enter a name');
+          this.message.channel.send('You must enter an username');
         }
-      } else {
-        this.message.channel.send('Your command is invalid');
       }
+
     } else {
-      this.message.channel.send('//AIDE COMMANDE BANK');
+      //TODO : display help
     }
   }
 }
