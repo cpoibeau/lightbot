@@ -180,6 +180,7 @@ module.exports = class TextCommand {
         } else {
           this.message.channel.send('You must enter an username');
         }
+
       } else if(this.message.content.split(' ')[1] == 'balance'){
 
         if(this.message.content.split(' ')[2]){
@@ -199,6 +200,45 @@ module.exports = class TextCommand {
           }
         } else {
           this.message.channel.send('You must enter an username');
+        }
+
+      } else if(this.message.content.split(' ')[1] == 'setSalary') {
+        if(this.message.content.split(' ')[2]){
+
+          if(this.message.guild.members.find('displayName', this.message.content.split(' ')[2])){
+
+            if(this.message.content.split(' ')[3]){
+
+              if(!isNaN(this.message.content.split(' ')[3])){
+                let user = this.message.guild.members.find('displayName', this.message.content.split(' ')[2]);
+                let amount = this.message.content.split(' ')[3];
+                db.query(`UPDATE users SET salary=${amount} WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}'`, (err)=>{
+                  if(err){
+                    this.message.channel.send('Failed to set the salary of this user');
+                  } else {
+                    this.message.channel.send(`The salary of this user is now ${amount}`);
+                  }
+                });
+                
+              } else {
+                this.message.channel.send('You must enter a valid amount');
+              }
+            } else {
+              this.message.channel.send('You must enter an amount');
+            }
+          } else {
+            this.message.channel.send('You must enter a valid name');
+          }
+        } else {
+          this.message.channel.send('You must enter an username');
+        }
+
+      } else if(this.message.content.split(' ')[1] == 'giveSalary') {
+        let user = this.message.guild.members.find('id', this.message.author.id);
+        if(user.hasPermission('MANAGE_GUILD')) {
+          db.query(`UPDATE users SET balance=balance+salary`);
+        } else {
+          this.message.channel.send('You\'re not allowed to use this command');
         }
       } else {
         this.message.channel.send('Invalid argument');
