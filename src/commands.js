@@ -65,7 +65,7 @@ module.exports = class TextCommand {
       .catch(console.error);
     } else {
       this.message.channel.send('You did not enter a valid number');
-    } //Ajouter une gestion d'exception lorsque les messages sélectionés sont datés de + de 14 jours
+    } //TODO : Ajouter une gestion d'exception lorsque les messages sélectionés sont datés de + de 14 jours
   }
 
   setPrefix(){
@@ -154,7 +154,7 @@ module.exports = class TextCommand {
                   if(err){
                     this.message.channel.send('Failed to credit this user');
 
-                  } else if(result){
+                  } else {
                     let balance = parseInt(result[0].balance);
                     let amount = balance + parseInt(this.message.content.split(' ')[3]);
 
@@ -180,6 +180,28 @@ module.exports = class TextCommand {
         } else {
           this.message.channel.send('You must enter an username');
         }
+      } else if(this.message.content.split(' ')[1] == 'balance'){
+
+        if(this.message.content.split(' ')[2]){
+
+          if(this.message.guild.members.find('displayName', this.message.content.split(' ')[2])){
+            let user = this.message.guild.members.find('displayName', this.message.content.split(' ')[2]);
+            db.query(`SELECT balance FROM users WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}'`, (err, result)=>{
+              if(err){
+                this.message.channel.send('There is no account for this user');
+              } else {
+                this.message.channel.send(`Available balance : ${result[0].balance}`);
+              }
+            });
+
+          } else {
+            this.message.channel.send('You must enter a valid name');
+          }
+        } else {
+          this.message.channel.send('You must enter an username');
+        }
+      } else {
+        this.message.channel.send('Invalid argument');
       }
 
     } else {
