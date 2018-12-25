@@ -121,73 +121,38 @@ module.exports = class TextCommand {
 
   bank(){
     if(this.message.content.split(' ')[1]){
+      //createAccount
       if(this.message.content.split(' ')[1] == 'createAccount'){
+        let regex = /<@!?(\d+)>/;
 
-        if(this.message.content.split(' ')[2]){
+        if(regex.test(this.message.content)){
   
-          if(this.message.guild.members.find('displayName', this.message.content.split(' ')[2])){
-            let user = this.message.guild.members.find('displayName', this.message.content.split(' ')[2]);
+          if(this.message.guild.members.find('id', regex.exec(this.message.content)[1])){
+            let user = this.message.guild.members.find('id', regex.exec(this.message.content)[1]);
             db.query(`INSERT INTO users (discord_id, username, guild_id, guild_name) VALUES ('${user.id}', '${user.displayName}', '${this.message.guild.id}', '${this.message.guild.name}')`, (err)=> {
               if(err){
-                this.message.channel.send('This account is already existing')
+                this.message.channel.send('This account is already existing');
+              } else {
+                this.message.channel.send('Account successfully created');
               }
             });
           } else {
-            this.message.channel.send('You must enter a valid name');
+            this.message.channel.send('You must enter a valid user tag');
           }
         } else {
-          this.message.channel.send('You must enter an username');
-        }
-  
-      } else if(this.message.content.split(' ')[1] == 'add') {
-  
-        if(this.message.content.split(' ')[2]){
-
-          if(this.message.guild.members.find('displayName', this.message.content.split(' ')[2])){
-
-            if(this.message.content.split(' ')[3]){
-
-              if(!isNaN(this.message.content.split(' ')[3])){
-                let user = this.message.guild.members.find('displayName', this.message.content.split(' ')[2]);
-
-                db.query(`SELECT balance FROM users WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}'`, (err, result)=>{
-                  if(err){
-                    this.message.channel.send('Failed to credit this user');
-
-                  } else {
-                    let balance = parseInt(result[0].balance);
-                    let amount = balance + parseInt(this.message.content.split(' ')[3]);
-
-                    db.query(`UPDATE users SET balance=${amount} WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}'`, (err)=>{
-                      if(err){
-                        this.message.channel.send('Failed to credit this user');
-                      } else {
-                        this.message.channel.send(`This account has been successfully credited !\n Balance is now \`${amount}\``)
-                      }
-                    });
-                  }
-                });
-                
-              } else {
-                this.message.channel.send('You must enter a valid amount');
-              }
-            } else {
-              this.message.channel.send('You must enter an amount');
-            }
-          } else {
-            this.message.channel.send('You must enter a valid name');
-          }
-        } else {
-          this.message.channel.send('You must enter an username');
+          this.message.channel.send('You must enter a user tag');
         }
 
+      //balance
       } else if(this.message.content.split(' ')[1] == 'balance'){
+        let regex = /<@!?(\d+)>/;
 
-        if(this.message.content.split(' ')[2]){
+        if(regex.test(this.message.content)){
 
-          if(this.message.guild.members.find('displayName', this.message.content.split(' ')[2])){
-            let user = this.message.guild.members.find('displayName', this.message.content.split(' ')[2]);
+          if(this.message.guild.members.find('id', regex.exec(this.message.content))){
+            let user = this.message.guild.members.find('id', regex.exec(this.message.content));
             db.query(`SELECT balance FROM users WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}'`, (err, result)=>{
+              
               if(err){
                 this.message.channel.send('There is no account for this user');
               } else {
@@ -196,45 +161,73 @@ module.exports = class TextCommand {
             });
 
           } else {
-            this.message.channel.send('You must enter a valid name');
+            this.message.channel.send('You must enter a valid user tag');
           }
         } else {
-          this.message.channel.send('You must enter an username');
+          this.message.channel.send('You must enter a user tag');
         }
 
-      } else if(this.message.content.split(' ')[1] == 'setSalary') {
-        if(this.message.content.split(' ')[2]){
+      //add
+      } else if(this.message.content.split(' ')[1] == 'add') {
+        let regex = /<@!?(\d+)> (-?\d+)$/;
 
-          if(this.message.guild.members.find('displayName', this.message.content.split(' ')[2])){
+        if(regex.test(this.message.content)){
 
-            if(this.message.content.split(' ')[3]){
+          if(this.message.guild.members.find('id', regex.exec(this.message.content)[1])){
+            let user = this.message.guild.members.find('id', regex.exec(this.message.content)[1]);
 
-              if(!isNaN(this.message.content.split(' ')[3])){
-                let user = this.message.guild.members.find('displayName', this.message.content.split(' ')[2]);
-                let amount = this.message.content.split(' ')[3];
-                db.query(`UPDATE users SET salary=${amount} WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}'`, (err)=>{
+            db.query(`SELECT balance FROM users WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}'`, (err, result)=>{
+              if(err){
+                this.message.channel.send('Failed to credit this user');
+
+              } else {
+                let balance = parseInt(result[0].balance);
+                let amount = balance + parseInt(regex.exec(this.message.content)[2]);
+                db.query(`UPDATE users SET balance=${amount} WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}'`, (err)=>{
+                  
                   if(err){
-                    this.message.channel.send('Failed to set the salary of this user');
+                    this.message.channel.send('Failed to credit this user');
                   } else {
-                    this.message.channel.send(`The salary of this user is now ${amount}`);
+                    this.message.channel.send(`This account has been successfully credited !\n Balance is now \`${amount}\``)
                   }
                 });
-                
-              } else {
-                this.message.channel.send('You must enter a valid amount');
               }
-            } else {
-              this.message.channel.send('You must enter an amount');
-            }
+            });
           } else {
             this.message.channel.send('You must enter a valid name');
           }
         } else {
-          this.message.channel.send('You must enter an username');
+          this.message.channel.send('You must enter a user tag and an amount');
         }
 
+      //setSalary
+      } else if(this.message.content.split(' ')[1] == 'setSalary') {
+        let regex = /<@!?(\d+)> (\d+)$/;
+
+        if(regex.test(this.message.content)){
+
+          if(this.message.guild.members.find('id', regex.exec(this.message.content)[1])){
+            let user = this.message.guild.members.find('id', regex.exec(this.message.content)[1]);
+            let amount = regex.exec(this.message.content)[2];
+            db.query(`UPDATE users SET salary=${amount} WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}'`, (err)=>{
+              
+              if(err){
+                this.message.channel.send('Failed to set the salary of this user');
+              } else {
+                this.message.channel.send(`The salary of this user is now ${amount}`);
+              }
+            });
+          } else {
+            this.message.channel.send('You must enter a valid name');
+          }
+        } else {
+          this.message.channel.send('You must enter a user tag and an amount');
+        }
+
+      //giveSalary
       } else if(this.message.content.split(' ')[1] == 'giveSalary') {
         let user = this.message.guild.members.find('id', this.message.author.id);
+
         if(user.hasPermission('MANAGE_GUILD')) {
           db.query(`UPDATE users SET balance=balance+salary`);
         } else {
