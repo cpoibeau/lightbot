@@ -140,7 +140,7 @@ module.exports = class TextCommand {
 
           if(this.message.guild.members.find('id', regex.exec(this.message.content))){
             let user = this.message.guild.members.find('id', regex.exec(this.message.content));
-            db.query(`SELECT balance FROM users WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id};'`, (err, result)=>{
+            db.query(`SELECT balance FROM users WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}';`, (err, result)=>{
               
               if(err){
                 this.message.channel.send('There is no account for this user');
@@ -165,7 +165,7 @@ module.exports = class TextCommand {
           if(this.message.guild.members.find('id', regex.exec(this.message.content)[1])){
             let user = this.message.guild.members.find('id', regex.exec(this.message.content)[1]);
 
-            db.query(`SELECT balance FROM users WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id};'`, (err, result)=>{
+            db.query(`SELECT balance FROM users WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}';`, (err, result)=>{
               if(err){
                 this.message.channel.send('Failed to credit this user');
 
@@ -198,7 +198,7 @@ module.exports = class TextCommand {
           if(this.message.guild.members.find('id', regex.exec(this.message.content)[1])){
             let user = this.message.guild.members.find('id', regex.exec(this.message.content)[1]);
             let amount = regex.exec(this.message.content)[2];
-            db.query(`UPDATE users SET salary=${amount} WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id};'`, (err)=>{
+            db.query(`UPDATE users SET salary=${amount} WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}';`, (err)=>{
               
               if(err){
                 this.message.channel.send('Failed to set the salary of this user');
@@ -218,7 +218,14 @@ module.exports = class TextCommand {
         let user = this.message.guild.members.find('id', this.message.author.id);
 
         if(user.hasPermission('MANAGE_GUILD')) {
-          db.query(`UPDATE users SET balance=balance+salary;`);
+          db.query(`UPDATE users SET balance=balance+salary;`, (err)=>{
+
+            if(err){
+              this.message.channel.send('Failed to give salary');
+            } else {
+              this.message.channel.send('Salary has been successfully given to all accounts');
+            }
+          });
         } else {
           this.message.channel.send('You\'re not allowed to use this command');
         }
