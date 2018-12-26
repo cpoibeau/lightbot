@@ -64,8 +64,8 @@ client.on('message', (msg) => {
         } else if (msg.content.startsWith(prefix + 'userInfos')) {
           command.userInfos();
 
-        } else if (msg.content.startsWith(prefix + 'time')) {
-          command.time();
+        } else if (msg.content.startsWith(prefix + 'bank')){
+          command.bank();
 
         } else if (adminCheckFromMsg(msg)) { // admin commands
           if (msg.content.startsWith(prefix + 'setPrefix')) {
@@ -79,9 +79,6 @@ client.on('message', (msg) => {
 
           } else if (msg.content.startsWith(prefix + 'setWelcomeMessage')){
             command.setWelcomeMessage();
-
-          } else if (msg.content.startsWith(prefix + 'bank')){
-            command.bank();
 
           } else if (reg.test(msg.content)){
             msg.channel.send("Command not found :/");
@@ -109,9 +106,6 @@ client.on('message', (msg) => {
         } else if (msg.content.startsWith(prefix + 'userInfos')) {
           command.userInfos();
 
-        } else if (msg.content.startsWith(prefix + 'time')) {
-          command.time();
-
         } else if (reg.test(msg.content)){
           msg.channel.send("Command not found, you may have entered a command only available on a Discord server :/");
         } 
@@ -134,4 +128,4 @@ client.on('error', (err) => {
   console.error(err);
 })
 
-client.login(connection.betaToken);
+client.login(connection.token);
