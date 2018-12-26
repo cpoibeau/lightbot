@@ -138,7 +138,7 @@ module.exports = class TextCommand {
 
         if(regex.test(this.message.content)){
 
-          if(this.message.guild.members.find('id', regex.exec(this.message.content))){
+          if(this.message.guild.members.find('id', regex.exec(this.message.content)[1])){
             let user = this.message.guild.members.find('id', regex.exec(this.message.content));
             db.query(`SELECT balance FROM users WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}';`, (err, result)=>{
               
