@@ -128,4 +128,4 @@ client.on('error', (err) => {
   console.error(err);
 })
 
-client.login(connection.token);
+client.login(connection.betaToken);

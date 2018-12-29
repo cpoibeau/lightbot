@@ -10,6 +10,8 @@ module.exports = class TextCommand {
   }
 
   help() {
+    
+
     this.message.channel.send(new Discord.RichEmbed()
       .setTitle('LightBot Commands :')
       .setColor('#f2ad16')
@@ -17,11 +19,13 @@ module.exports = class TextCommand {
         `\`${this.prefix}help\` - Display help\n` +
         `\`${this.prefix}ping\` - Answer "pong !"\n` +
         `\`${this.prefix}population\` - Display the current member count of this Discord server\n` +
-        `\`${this.prefix}search <your-search>\` - Search on google\n` +
+        `\`${this.prefix}search\` \`<your-search>\` - Search on google\n` +
         `\`${this.prefix}userInfos\` - Send you a DM with additional informations about your account\n` +
-        `\`${this.prefix}purge <number>\` - *(admin)* Delete the lasts messages on the current channel\n` +
-        `\`${this.prefix}setPrefix <prefix>\` - *(admin)* Changes the bot's command prefix\n` +
-        `\`${this.prefix}setWelcomeChannel\` - *(admin)* Sets the channel where welcome messages will be diplayed\n`
+        `\`${this.prefix}purge\` \`<number>\` - *(admin)* Delete the lasts messages on the current channel\n` +
+        `\`${this.prefix}setPrefix\` \`<prefix>\` - *(admin)* Changes the bot's command prefix\n` +
+        `\`${this.prefix}setWelcomeChannel\` - *(admin)* Sets the channel where welcome messages will be diplayed\n` +
+        `\`${this.prefix}setWelcomeMessage\` - *(admin)* Sets the channel where welcome messages will be diplayed\n` +
+        `\`${this.prefix}bank\` - All bank system commands. Type \`${this.prefix}bank help\` to get some help about the bank system`
       )
       .setFooter(`Requested by : ${this.message.author.tag}`)
     );
@@ -110,6 +114,7 @@ module.exports = class TextCommand {
 
   bank(){
     if(this.message.content.split(' ')[1]){
+
       //createAccount
       if(this.message.content.split(' ')[1] == 'createAccount'){
         let regex = /<@!?(\d+)>/;
@@ -118,7 +123,7 @@ module.exports = class TextCommand {
   
           if(this.message.guild.members.find('id', regex.exec(this.message.content)[1])){
             let user = this.message.guild.members.find('id', regex.exec(this.message.content)[1]);
-            db.query(`INSERT INTO users (discord_id, username, guild_id, guild_name) VALUES ('${user.id}', '${user.displayName}', '${this.message.guild.id}', '${this.message.guild.name};')`, (err)=> {
+            db.query(`INSERT INTO users (discord_id, username, guild_id, guild_name) VALUES ('${user.id}', '${user.displayName}', '${this.message.guild.id}', '${this.message.guild.name}';)`, (err)=> {
               if(err){
                 this.message.channel.send('This account is already existing');
               } else {
@@ -139,13 +144,13 @@ module.exports = class TextCommand {
         if(regex.test(this.message.content)){
 
           if(this.message.guild.members.find('id', regex.exec(this.message.content)[1])){
-            let user = this.message.guild.members.find('id', regex.exec(this.message.content));
+            let user = this.message.guild.members.find('id', regex.exec(this.message.content)[1]);
             db.query(`SELECT balance FROM users WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}';`, (err, result)=>{
               
               if(err){
                 this.message.channel.send('There is no account for this user');
               } else {
-                this.message.channel.send(`Available balance : ${result[0].balance}`);
+                this.message.channel.send(`Available balance : \`${result[0].balance}\``);
               }
             });
 
@@ -165,23 +170,27 @@ module.exports = class TextCommand {
           if(this.message.guild.members.find('id', regex.exec(this.message.content)[1])){
             let user = this.message.guild.members.find('id', regex.exec(this.message.content)[1]);
 
-            db.query(`SELECT balance FROM users WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}';`, (err, result)=>{
-              if(err){
-                this.message.channel.send('Failed to credit this user');
+            if(this.message.author.hasPermission('MANAGE_GUILD')){
+              db.query(`SELECT balance FROM users WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}';`, (err, result)=>{
+                if(err){
+                  this.message.channel.send('Failed to credit this user');
 
-              } else {
-                let balance = parseInt(result[0].balance);
-                let amount = balance + parseInt(regex.exec(this.message.content)[2]);
-                db.query(`UPDATE users SET balance=${amount} WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}'`, (err)=>{
-                  
-                  if(err){
-                    this.message.channel.send('Failed to credit this user');
-                  } else {
-                    this.message.channel.send(`This account has been successfully credited !\n Balance is now \`${amount}\``)
-                  }
-                });
-              }
-            });
+                } else {
+                  let balance = parseInt(result[0].balance);
+                  let amount = balance + parseInt(regex.exec(this.message.content)[2]);
+                  db.query(`UPDATE users SET balance=${amount} WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}'`, (err)=>{
+                    
+                    if(err){
+                      this.message.channel.send('Failed to credit this user');
+                    } else {
+                      this.message.channel.send(`This account has been successfully credited !\n Balance is now \`${amount}\``)
+                    }
+                  });
+                }
+              });
+            } else {
+              this.message.channel.send('You\'re not allowed to use this command');
+            }
           } else {
             this.message.channel.send('You must enter a valid user tag');
           }
@@ -198,14 +207,19 @@ module.exports = class TextCommand {
           if(this.message.guild.members.find('id', regex.exec(this.message.content)[1])){
             let user = this.message.guild.members.find('id', regex.exec(this.message.content)[1]);
             let amount = regex.exec(this.message.content)[2];
-            db.query(`UPDATE users SET salary=${amount} WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}';`, (err)=>{
+
+            if(this.message.author.hasPermission('MANAGE_GUILD')){
+              db.query(`UPDATE users SET salary=${amount} WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}';`, (err)=>{
               
-              if(err){
-                this.message.channel.send('Failed to set the salary of this user');
-              } else {
-                this.message.channel.send(`The salary of this user is now ${amount}`);
-              }
-            });
+                if(err){
+                  this.message.channel.send('Failed to set the salary of this user');
+                } else {
+                  this.message.channel.send(`The salary of this user is now \`${amount}\``);
+                }
+              });
+            } else {
+              this.message.channel.send('You\'re not allowed to use this command');
+            }
           } else {
             this.message.channel.send('You must enter a valid user tag');
           }
