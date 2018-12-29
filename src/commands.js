@@ -170,7 +170,7 @@ module.exports = class TextCommand {
           if(this.message.guild.members.find('id', regex.exec(this.message.content)[1])){
             let user = this.message.guild.members.find('id', regex.exec(this.message.content)[1]);
 
-            if(this.message.author.hasPermission('MANAGE_GUILD')){
+            if(this.message.guild.members.find('id', this.message.author.id).hasPermission('MANAGE_GUILD')){
               db.query(`SELECT balance FROM users WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}';`, (err, result)=>{
                 if(err){
                   this.message.channel.send('Failed to credit this user');
@@ -208,7 +208,7 @@ module.exports = class TextCommand {
             let user = this.message.guild.members.find('id', regex.exec(this.message.content)[1]);
             let amount = regex.exec(this.message.content)[2];
 
-            if(this.message.author.hasPermission('MANAGE_GUILD')){
+            if(this.message.guild.members.find('id', this.message.author.id).hasPermission('MANAGE_GUILD')){
               db.query(`UPDATE users SET salary=${amount} WHERE discord_id='${user.id}' AND guild_id='${this.message.guild.id}';`, (err)=>{
               
                 if(err){
