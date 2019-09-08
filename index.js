@@ -67,6 +67,21 @@ client.on('message', (msg) => {
         } else if (msg.content.startsWith(prefix + 'bank')){
           command.bank();
 
+        } else if (msg.content.startsWith(prefix + 'join')){
+          command.join();
+
+        }  else if (msg.content.startsWith(prefix + 'play')){
+          command.play();
+
+        } else if (msg.content.startsWith(prefix + 'pause')){
+          command.pause();
+
+        } else if (msg.content.startsWith(prefix + 'stop')){
+          command.stop();
+
+        } else if (msg.content.startsWith(prefix + 'leave')){
+          command.leave();
+
         } else if (adminCheckFromMsg(msg)) { // admin commands
           if (msg.content.startsWith(prefix + 'setPrefix')) {
             command.setPrefix();
@@ -128,4 +143,4 @@ client.on('error', (err) => {
   console.error(err);
 })
 
-client.login(connection.token);
+client.login(connection.betaToken);
