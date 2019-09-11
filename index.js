@@ -65,33 +65,15 @@ client.on('message', (msg) => {
         } else if (msg.content.startsWith(prefix + 'bank')){
           command.bank()
 
-        } else if (msg.content.startsWith(prefix + 'join')){
-          command.join()
-
-        }  else if (msg.content.startsWith(prefix + 'play')){
-          command.play()
-
-        } else if (msg.content.startsWith(prefix + 'pause')){
-          command.pause()
-
-        } else if (msg.content.startsWith(prefix + 'stop')){
-          command.stop()
-
-        } else if (msg.content.startsWith(prefix + 'leave')){
-          command.leave()
+        } else if (msg.content.startsWith(prefix + 'music')){
+          command.music()
 
         } else if (adminCheckFromMsg(msg)) { // admin commands
-          if (msg.content.startsWith(prefix + 'setPrefix')) {
-            command.setPrefix()
+          if (msg.content.startsWith(prefix + 'settings')) {
+            command.settings()
 
           } else if (msg.content.startsWith(prefix + 'purge')){
             command.purge()
-
-          } else if (msg.content.startsWith(prefix + 'setWelcomeChannel')) {
-            command.setWelcomeChannel()
-
-          } else if (msg.content.startsWith(prefix + 'setWelcomeMessage')){
-            command.setWelcomeMessage()
 
           } else if (reg.test(msg.content)){
             msg.channel.send("Command not found :/")

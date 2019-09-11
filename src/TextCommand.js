@@ -1,8 +1,7 @@
 const Discord = require('discord.js')
-const Connection = require('../config/connection.js')
 const Bank = require('./commands/Bank')
-
-let db = new Connection().sqlConnection();
+const Music = require('./commands/Music')
+const Settings = require('./commands/Settings')
 
 module.exports = class TextCommand {
   constructor(prefix, msg){
@@ -73,43 +72,22 @@ module.exports = class TextCommand {
     } //TODO : Ajouter une gestion d'exception lorsque les messages sélectionés sont datés de + de 14 jours
   }
 
-  setPrefix(){
-    let regex = /([!:;,%_-]{1,2})|([\w\d]{1,4}-)/i;
-    if(regex.test(this.message.content.split(' ')[1])){
-      this.prefix = regex.exec(this.message.content.split(' ')[1])[0];
-      this.message.channel.send(`Bot prefix has been set to : ${this.prefix}`);
-      db.query(`UPDATE guilds SET prefix='${this.prefix}' WHERE discord_id='${this.message.guild.id}'`);
-    } else {
-      this.message.channel.send('Bot prefix has not been changed :/');
-    }
-  }
-
-  setWelcomeChannel(){
+  settings(){
     if(this.message.content.split(' ')[1]){
-      let welcomeChannel = this.message.guild.channels.find('name', this.message.content.split(' ')[1]);
+      let command = new Settings(this.prefix, this.message)
 
-      if(welcomeChannel){
-        this.message.channel.send(`Welcome messages channel has been set to : ${welcomeChannel.name}`);
-        db.query(`UPDATE guilds SET welcomeChannel='${welcomeChannel.id}' WHERE discord_id='${this.message.guild.id}';`);
+      if(this.message.content.split(' ')[1] == 'setPrefix'){
+        command.setPrefix()
+
+      } else if(this.message.content.split(' ')[1] == 'setWelcomeChannel'){
+        command.setWelcomeChannel()
+
+      } else if(this.message.content.split(' ')[1] == 'setWelcomeMessage') {
+        command.setWelcomeMessage()
 
       } else {
-        this.message.channel.send(`There is no channel "${this.message.content.split(' ')[1]}"`);
+        this.message.channel.send('Not a settings command')
       }
-
-    } else {
-      this.message.channel.send('You did not enter channel name');
-    }
-  }
-
-  setWelcomeMessage(){
-    if (this.message.content.slice(this.prefix.length + 'setWelcomeMessage '.length)){
-      let welcomeMessage = this.message.content.slice((this.prefix.length + 'setWelcomeMessage '.length));
-      
-      db.query(`UPDATE guilds SET welcomeMessage='${welcomeMessage}' WHERE discord_id='${this.message.guild.id}';`);
-      this.message.channel.send(`Welcome message has been set to : ${welcomeMessage}`)
-
-    } else {
-      this.message.channel.send(' You did not enter welcome message');
     }
   }
 
@@ -140,54 +118,28 @@ module.exports = class TextCommand {
     }
   }
 
-  join(){
-    if(this.message.member.voiceChannel){
-      this.message.member.voiceChannel.join().then(connection => {
-        this.message.channel.send('I have successfully connected to the channel !')
-      }).catch(console.log)
-    } else {
-      this.message.channel.send('You must join a voice channel first !')
-    }
-  }
+  music(){
+    if(this.message.content.split(' ')[1]){
+      let command = new Music(this.prefix, this.message)
 
-  play(){
-    if(this.message.guild.voiceConnection){
-      if(this.message.guild.voiceConnection.dispatcher){
-        this.message.guild.voiceConnection.dispatcher.resume()
+      if(this.message.content.split(' ')[1] == 'join'){
+        command.join()
+
+      } else if(this.message.content.split(' ')[1] == 'leave'){
+        command.leave()
+
+      } else if(this.message.content.split(' ')[1] == 'play') {
+        command.play()
+
+      } else if(this.message.content.split(' ')[1] == 'pause') {
+        command.pause()
+
+      } else if(this.message.content.split(' ')[1] == 'stop') {
+        command.stop()
+
       } else {
-        const dispatcher = this.message.guild.voiceConnection.playFile('D:/Documents/Développement/JavaScript/lightbot/music.mp3')
+        this.message.channel.send('Not a music command')
       }
-    } else {
-      this.message.channel.send('I must join a voice channel first !')
-    }
-  }
-
-  pause(){
-    if(this.message.guild.voiceConnection){
-      if(this.message.guild.voiceConnection.dispatcher){
-        this.message.guild.voiceConnection.dispatcher.pause()
-      }
-    } else {
-      this.message.channel.send('I must play music first !')
-    }
-  }
-
-  stop(){
-    if(this.message.guild.voiceConnection){
-      if(this.message.guild.voiceConnection.dispatcher){
-      this.message.guild.voiceConnection.dispatcher.end()
-      }
-    } else {
-      this.message.channel.send('I must play music first !')
-    }
-  }
-
-  leave(){
-    if(this.message.guild.voiceConnection){
-      this.message.guild.voiceConnection.channel.leave()
-      this.message.channel.send('Channel left !')
-    } else {
-      this.message.channel.send('I\'m not connected to any channel :/')
     }
   }
 }
