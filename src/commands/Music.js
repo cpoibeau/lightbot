@@ -54,4 +54,8 @@ module.exports = class Music {
       this.message.channel.send('I\'m not connected to any channel :/')
     }
   }
+  
+  help(){
+    this.message.channel.send("Command not found :/")
+  }
 }

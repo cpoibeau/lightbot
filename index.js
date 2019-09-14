@@ -9,7 +9,7 @@ let db = connection.sqlConnection()
 
 //Database connection
 db.connect((err) => {
-  if(err) throw err;
+  if(err) throw err
   console.log('Connection with batabase etablished !')
 })
 
@@ -102,7 +102,7 @@ client.on('message', (msg) => {
           command.userInfos()
 
         } else if (reg.test(msg.content)){
-          msg.channel.send("Command not found, you may have entered a command only available on a Discord server :/");
+          msg.channel.send("Command not found, you may have entered a command only available on a Discord server :/")
         } 
       }
   }

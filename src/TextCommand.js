@@ -5,8 +5,8 @@ const Settings = require('./commands/Settings')
 
 module.exports = class TextCommand {
   constructor(prefix, msg){
-    this.message = msg;
-    this.prefix = prefix;
+    this.message = msg
+    this.prefix = prefix
   }
 
   help() {
@@ -21,34 +21,32 @@ module.exports = class TextCommand {
         `\`${this.prefix}population\` - Display the current member count of this Discord server\n` +
         `\`${this.prefix}search\` \`<your-search>\` - Search on google\n` +
         `\`${this.prefix}userInfos\` - Send you a DM with additional informations about your account\n` +
-        `\`${this.prefix}purge\` \`<number>\` - *(admin)* Delete the lasts messages on the current channel\n` +
-        `\`${this.prefix}setPrefix\` \`<prefix>\` - *(admin)* Changes the bot's command prefix\n` +
-        `\`${this.prefix}setWelcomeChannel\` - *(admin)* Sets the channel where welcome messages will be diplayed\n` +
-        `\`${this.prefix}setWelcomeMessage\` - *(admin)* Sets the channel where welcome messages will be diplayed\n` +
+        `\`${this.prefix}purge\` \`<number>\` - *(admin)* Delete the last messages on the current channel\n` +
+        `\`${this.prefix}settings\` - *(admin)* All settings concerning this Discord server. Type \`${this.prefix}settings help\` to get some help about the settings\n` +
         `\`${this.prefix}bank\` - All bank system commands. Type \`${this.prefix}bank help\` to get some help about the bank system`
       )
       .setFooter(`Requested by : ${this.message.author.tag}`)
-    );
+    )
   }
 
   ping(){
-    this.message.channel.send('pong !');
+    this.message.channel.send('pong !')
   }
 
   search(){
-    let search = this.message.content.slice(this.prefix.length + 'search '.length).replace(/ /g, '+');
-    this.message.channel.send(`http://google.com/search?q=${search}`);
+    let search = this.message.content.slice(this.prefix.length + 'search '.length).replace(/ /g, '+')
+    this.message.channel.send(`http://google.com/search?q=${search}`)
   }
 
   population(){
-    this.message.channel.send(`There are ${this.message.guild.memberCount} members on this Discord server`);
+    this.message.channel.send(`There are ${this.message.guild.memberCount} members on this Discord server`)
   }
 
   userInfos(){
     this.message.delete().catch(err => {
-      console.error(err);
-    });
-    let creationDate = this.message.author.createdAt.toString().split(' ');
+      console.error(err)
+    })
+    let creationDate = this.message.author.createdAt.toString().split(' ')
     this.message.author.send(new Discord.RichEmbed()
       .setColor('#f2ad16')
       .setTitle('**Your profile :**')
@@ -59,16 +57,16 @@ module.exports = class TextCommand {
       )
       .setThumbnail(this.message.author.avatarURL)
       .setFooter(`Requested by : ${this.message.author.tag}`)
-    );
+    )
   }
 
   purge(){
-    let a = Number(this.message.content.split(' ')[1]) + 1;
+    let a = Number(this.message.content.split(' ')[1]) + 1
     if (a && a <= 100) {
       this.message.channel.bulkDelete(a)
-      .catch(console.error);
+      .catch(console.error)
     } else {
-      this.message.channel.send('You did not enter a valid number');
+      this.message.channel.send('You did not enter a valid number')
     } //TODO : Ajouter une gestion d'exception lorsque les messages sélectionés sont datés de + de 14 jours
   }
 
@@ -86,7 +84,7 @@ module.exports = class TextCommand {
         command.setWelcomeMessage()
 
       } else {
-        this.message.channel.send('Not a settings command')
+        command.help()
       }
     }
   }
@@ -138,7 +136,7 @@ module.exports = class TextCommand {
         command.stop()
 
       } else {
-        this.message.channel.send('Not a music command')
+        command.help()
       }
     }
   }
