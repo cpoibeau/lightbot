@@ -1,131 +1,126 @@
-const Discord = require('discord.js');
-const Connection = require('./config/connection.js');
-const TextCommand = require('./src/commands.js');
+const Discord = require('discord.js')
+const Connection = require('./config/connection')
+const TextCommand = require('./src/TextCommand')
 
-let client = new Discord.Client();
-let connection = new Connection();
+let client = new Discord.Client()
+let connection = new Connection()
 
-let db = connection.sqlConnection();
+let db = connection.sqlConnection()
 
 //Database connection
 db.connect((err) => {
-  if(err) throw err;
-  console.log('Connection with batabase etablished !');
-});
+  if(err) throw err
+  console.log('Connection with batabase etablished !')
+})
 
 // Ready + liste des seveurs
 client.on('ready', () => {
-  console.log('Ready !');
+  console.log('Ready !')
   Array.from(client.guilds.keys()).forEach((element) => {
-    let guild = client.guilds.get(element);
-    let parsed_date = guild.createdAt.toJSON().replace('T', ' ').split('.')[0];
+    let guild = client.guilds.get(element)
+    let parsed_date = guild.createdAt.toJSON().replace('T', ' ').split('.')[0]
     db.query(`INSERT INTO guilds (discord_id, name, creation_date) VALUES ('${guild.id}', '${guild.name}', '${parsed_date}') `+
-    `ON DUPLICATE KEY UPDATE name='${guild.name}', last_connexion=NOW();`);
+    `ON DUPLICATE KEY UPDATE name='${guild.name}', last_connexion=NOW();`)
 
-  });
+  })
   client.user.setActivity(`Say lb-help for help !`, {
     url: 'https://discord.js.org',
     type: 'PLAYING'
-  });
-});
+  })
+})
 
 function adminCheckFromMsg(msg){
-  let member2Check = msg.guild.members.get(msg.author.id);
-  return member2Check.hasPermission('MANAGE_CHANNELS') || member2Check.hasPermission('MANAGE_GUILD');
+  let member2Check = msg.guild.members.get(msg.author.id)
+  return member2Check.hasPermission('MANAGE_CHANNELS') || member2Check.hasPermission('MANAGE_GUILD')
 }
 
 // Commands
 client.on('message', (msg) => {
   if (!msg.author.bot) {
-    let command;
-    let reg;
-    let prefix;
+    let command, reg, prefix
 
     if (msg.guild != undefined){   // Guild commands
       db.query(`SELECT prefix FROM guilds WHERE discord_id=${msg.guild.id};`, (err, result) => {
-        if (err) throw err;
+        if (err) throw err
 
-        prefix = result[0].prefix;
-        command = new TextCommand(prefix, msg);
-        reg = new RegExp('^' + prefix, 'i');
+        prefix = result[0].prefix
+        command = new TextCommand(prefix, msg)
+        reg = new RegExp('^' + prefix, 'i')
 
         if (msg.content.startsWith(prefix + 'help')) {
-          command.help();
+          command.help()
 
         } else if (msg.content.startsWith(prefix + 'ping')) {
-          command.ping();
+          command.ping()
 
         } else if (msg.content.startsWith(prefix + 'search')) {
-          command.search();
+          command.search()
 
         } else if (msg.content.startsWith(prefix + 'population')){
-          command.population();
+          command.population()
 
         } else if (msg.content.startsWith(prefix + 'userInfos')) {
-          command.userInfos();
+          command.userInfos()
 
         } else if (msg.content.startsWith(prefix + 'bank')){
-          command.bank();
+          command.bank()
+
+        } else if (msg.content.startsWith(prefix + 'music')){
+          command.music()
 
         } else if (adminCheckFromMsg(msg)) { // admin commands
-          if (msg.content.startsWith(prefix + 'setPrefix')) {
-            command.setPrefix();
+          if (msg.content.startsWith(prefix + 'settings')) {
+            command.settings()
 
           } else if (msg.content.startsWith(prefix + 'purge')){
-            command.purge();
-
-          } else if (msg.content.startsWith(prefix + 'setWelcomeChannel')) {
-            command.setWelcomeChannel();
-
-          } else if (msg.content.startsWith(prefix + 'setWelcomeMessage')){
-            command.setWelcomeMessage();
+            command.purge()
 
           } else if (reg.test(msg.content)){
-            msg.channel.send("Command not found :/");
+            msg.channel.send("Command not found :/")
           }
 
         } else if (reg.test(msg.content)){
-          msg.channel.send("Command not found, you may not be allowed to use it :/");
+          msg.channel.send("Command not found, you may not be allowed to use it :/")
         }
-      });
+      })
 
       } else {  // DM commands
-        prefix = 'lb-';
-        command = new TextCommand(prefix, msg);
-        reg = new RegExp('^' + prefix, 'i');
+        prefix = 'lb-'
+        command = new TextCommand(prefix, msg)
+        reg = new RegExp('^' + prefix, 'i')
 
         if (msg.content.startsWith(prefix + 'help')) {
-          command.help();
+          command.help()
 
         } else if (msg.content.startsWith(prefix + 'ping')) {
-          command.ping();
+          command.ping()
 
         } else if (msg.content.startsWith(prefix + 'search')) {
-          command.search();
+          command.search()
 
         } else if (msg.content.startsWith(prefix + 'userInfos')) {
-          command.userInfos();
+          command.userInfos()
 
         } else if (reg.test(msg.content)){
-          msg.channel.send("Command not found, you may have entered a command only available on a Discord server :/");
+          msg.channel.send("Command not found, you may have entered a command only available on a Discord server :/")
         } 
       }
   }
-});
+})
 
 // Welcome message
 client.on('guildMemberAdd', (member) => {
-  member.send(`Welcome on ${member.guild.name}, ${member.user.username} !`);
+  member.send(`Welcome on ${member.guild.name}, ${member.user.username} !`)
   db.query(`SELECT welcomeChannel FROM guilds WHERE discord_id='${member.guild.id}'`, (err, result) => {
-    if (err) throw err;
+    if (err) throw err
     if (result){
-      member.guild.channels.get(result[0].welcomeChannel).send('Welcome on our server <@' + member.user.id + '> !');
+      member.guild.channels.get(result[0].welcomeChannel).send('Welcome on our server <@' + member.user.id + '> !')
     }
-  });
-});
-
-client.on('error', (err) => {
-  console.error(err);
+  })
 })
 
-client.login(connection.token);
+client.on('error', (err) => {
+  console.error(err)
+})
+
+client.login(connection.token)
