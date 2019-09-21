@@ -123,4 +123,4 @@ client.on('error', (err) => {
   console.error(err)
 })
 
-client.login(connection.betaToken)
+client.login(connection.token)
