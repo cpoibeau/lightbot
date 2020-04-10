@@ -9,10 +9,10 @@
   "author": "ArcLight_4",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^11.5.1",
+    "discord.js": "^11.6.4",
     "ffmpeg": "0.0.4",
     "ffmpeg-binaries": "^4.0.0",
-    "mysql": "^2.17.1",
+    "mysql": "^2.18.1",
     "opusscript": "0.0.7"
   }
 }
