@@ -1,6 +1,6 @@
 const { RichEmbed} = require('discord.js')
 
-module.exports = (client, msg, prefix, args) => {
+module.exports = (client, msg, prefix, args, db) => {
   msg.delete().catch(err => {
     console.error(err)
   })

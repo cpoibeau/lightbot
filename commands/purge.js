@@ -1,4 +1,4 @@
-module.exports = (client, msg, prefix, args) => {
+module.exports = (client, msg, prefix, args, db) => {
   let a = Number(args[0])
 
   if (a <= 100) {

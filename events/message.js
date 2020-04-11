@@ -14,7 +14,7 @@ module.exports = (client, msg, db) => {
     const cmd = args.shift().toLowerCase().match(reg)[1]
 
     if (client.commands.has(cmd)){
-      client.commands.get(cmd)(client, msg, prefix, args)
+      client.commands.get(cmd)(client, msg, prefix, args, db)
     }
   })
 }

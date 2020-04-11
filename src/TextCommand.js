@@ -8,24 +8,6 @@ module.exports = class TextCommand {
     this.message = msg
     this.prefix = prefix
   }
-  settings(){
-    if(this.message.content.split(' ')[1]){
-      let command = new Settings(this.prefix, this.message)
-
-      if(this.message.content.split(' ')[1] == 'setPrefix'){
-        command.setPrefix()
-
-      } else if(this.message.content.split(' ')[1] == 'setWelcomeChannel'){
-        command.setWelcomeChannel()
-
-      } else if(this.message.content.split(' ')[1] == 'setWelcomeMessage') {
-        command.setWelcomeMessage()
-
-      } else {
-        command.help()
-      }
-    }
-  }
 
   bank(){
     if(this.message.content.split(' ')[1]){
