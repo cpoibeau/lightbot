@@ -1,4 +1,2 @@
-config/
+config.js
 .vscode/
-.test.js
-*.log
