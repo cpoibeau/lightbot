@@ -15,9 +15,13 @@ db.connect((err) => {
 // Commands
 client.commands = new Discord.Collection()
 client.settings = new Discord.Collection()
+client.bank = new Discord.Collection()
+client.music = new Discord.Collection()
 
 require('./misc/fileBrowser')('./commands/', client.commands)
 require('./misc/fileBrowser')('./commands/settings/', client.settings)
+require('./misc/fileBrowser')('./commands/bank/', client.bank)
+require('./misc/fileBrowser')('./commands/music/', client.music)
 
 // Event manager
 client.on('ready', () => require('./events/ready')(client, db))
