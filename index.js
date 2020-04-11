@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const Config = require('./config')
+const fs = require('fs')
 
 let client = new Discord.Client()
 let config = new Config()
@@ -14,7 +15,15 @@ db.connect((err) => {
 
 // Commands
 client.commands = new Discord.Collection()
-client.commands.set('ping', require('./commands/ping'))
+
+fs.readdir('./commands/', (err, items) => {
+  if (err) console.error(err)
+  
+  items.forEach( (file) => {
+    name = file.split('.')[0]
+    client.commands.set(name.toLowerCase(), require('./commands/' + name))
+  })
+})
 
 // Event manager
 client.on('ready', () => require('./events/ready')(client, db))
