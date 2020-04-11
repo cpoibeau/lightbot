@@ -1,126 +1,35 @@
 const Discord = require('discord.js')
-const Connection = require('./config/connection')
-const TextCommand = require('./src/TextCommand')
+const Config = require('./config')
 
 let client = new Discord.Client()
-let connection = new Connection()
+let config = new Config()
 
-let db = connection.sqlConnection()
+// Database connection
+let db = config.sqlConnection()
 
-//Database connection
 db.connect((err) => {
   if(err) throw err
   console.log('Connection with batabase etablished !')
 })
 
-// Ready + liste des seveurs
-client.on('ready', () => {
-  console.log('Ready !')
-  Array.from(client.guilds.keys()).forEach((element) => {
-    let guild = client.guilds.get(element)
-    let parsed_date = guild.createdAt.toJSON().replace('T', ' ').split('.')[0]
-    db.query(`INSERT INTO guilds (discord_id, name, creation_date) VALUES ('${guild.id}', '${guild.name}', '${parsed_date}') `+
-    `ON DUPLICATE KEY UPDATE name='${guild.name}', last_connexion=NOW();`)
-
-  })
-  client.user.setActivity(`Say lb-help for help !`, {
-    url: 'https://discord.js.org',
-    type: 'PLAYING'
-  })
-})
-
-function adminCheckFromMsg(msg){
-  let member2Check = msg.guild.members.get(msg.author.id)
-  return member2Check.hasPermission('MANAGE_CHANNELS') || member2Check.hasPermission('MANAGE_GUILD')
-}
-
 // Commands
-client.on('message', (msg) => {
-  if (!msg.author.bot) {
-    let command, reg, prefix
+client.commands = new Discord.Collection()
+client.settings = new Discord.Collection()
+client.bank = new Discord.Collection()
+client.music = new Discord.Collection()
 
-    if (msg.guild != undefined){   // Guild commands
-      db.query(`SELECT prefix FROM guilds WHERE discord_id=${msg.guild.id};`, (err, result) => {
-        if (err) throw err
+require('./misc/fileBrowser')('./commands/', client.commands)
+require('./misc/fileBrowser')('./commands/settings/', client.settings)
+require('./misc/fileBrowser')('./commands/bank/', client.bank)
+require('./misc/fileBrowser')('./commands/music/', client.music)
 
-        prefix = result[0].prefix
-        command = new TextCommand(prefix, msg)
-        reg = new RegExp('^' + prefix, 'i')
+// Event manager
+client.on('ready', () => require('./events/ready')(client, db))
+client.on('message', (msg) => require('./events/message')(client, msg, db))
+client.on('guildMemberAdd', (guildMember) => require('./events/addGuildMember')(guildMember))
 
-        if (msg.content.startsWith(prefix + 'help')) {
-          command.help()
+client.on('error', console.error)
+client.on('warn', console.warn)
+client.on('debug', console.debug)
 
-        } else if (msg.content.startsWith(prefix + 'ping')) {
-          command.ping()
-
-        } else if (msg.content.startsWith(prefix + 'search')) {
-          command.search()
-
-        } else if (msg.content.startsWith(prefix + 'population')){
-          command.population()
-
-        } else if (msg.content.startsWith(prefix + 'userInfos')) {
-          command.userInfos()
-
-        } else if (msg.content.startsWith(prefix + 'bank')){
-          command.bank()
-
-        } else if (msg.content.startsWith(prefix + 'music')){
-          command.music()
-
-        } else if (adminCheckFromMsg(msg)) { // admin commands
-          if (msg.content.startsWith(prefix + 'settings')) {
-            command.settings()
-
-          } else if (msg.content.startsWith(prefix + 'purge')){
-            command.purge()
-
-          } else if (reg.test(msg.content)){
-            msg.channel.send("Command not found :/")
-          }
-
-        } else if (reg.test(msg.content)){
-          msg.channel.send("Command not found, you may not be allowed to use it :/")
-        }
-      })
-
-      } else {  // DM commands
-        prefix = 'lb-'
-        command = new TextCommand(prefix, msg)
-        reg = new RegExp('^' + prefix, 'i')
-
-        if (msg.content.startsWith(prefix + 'help')) {
-          command.help()
-
-        } else if (msg.content.startsWith(prefix + 'ping')) {
-          command.ping()
-
-        } else if (msg.content.startsWith(prefix + 'search')) {
-          command.search()
-
-        } else if (msg.content.startsWith(prefix + 'userInfos')) {
-          command.userInfos()
-
-        } else if (reg.test(msg.content)){
-          msg.channel.send("Command not found, you may have entered a command only available on a Discord server :/")
-        } 
-      }
-  }
-})
-
-// Welcome message
-client.on('guildMemberAdd', (member) => {
-  member.send(`Welcome on ${member.guild.name}, ${member.user.username} !`)
-  db.query(`SELECT welcomeChannel FROM guilds WHERE discord_id='${member.guild.id}'`, (err, result) => {
-    if (err) throw err
-    if (result){
-      member.guild.channels.get(result[0].welcomeChannel).send('Welcome on our server <@' + member.user.id + '> !')
-    }
-  })
-})
-
-client.on('error', (err) => {
-  console.error(err)
-})
-
-client.login(connection.token)
+client.login(config.token)
