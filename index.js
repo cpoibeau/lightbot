@@ -28,6 +28,9 @@ require('./misc/eventAdder')('./events/', client, db)
 
 client.on('error', console.error)
 client.on('warn', console.warn)
-client.on('debug', console.debug)
+client.on('debug', (debug) => {
+  if (debug.includes('Sending a heartbeat') || debug.includes(' Heartbeat acknowledged')) return
+  console.debug(debug)
+})
 
 client.login(config.token)

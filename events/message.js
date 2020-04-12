@@ -7,7 +7,7 @@ module.exports = (client, db, msg) => {
     let prefix = result[0].prefix
 
     if (!msg.content.startsWith(prefix)) return
-    console.log(msg.content)
+    console.log(`${msg.author.tag} used : '${msg.content}' on ${msg.guild}`)
 
     const args = msg.content.split(/ +/g)
     reg = new RegExp(prefix + '(\\S+)')

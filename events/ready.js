@@ -1,6 +1,4 @@
 module.exports = (client, db) => {
-  console.log('Ready !')
-  
   Array.from(client.guilds.keys()).forEach((element) => {
     let guild = client.guilds.get(element)
     let parsed_date = guild.createdAt.toJSON().replace('T', ' ').split('.')[0]
