@@ -1,6 +1,10 @@
 const { RichEmbed} = require('discord.js')
 
 module.exports = (msg, prefix, args, db) => {
+  msg.delete().catch(err => {
+    console.error(err)
+  })
+  
   msg.channel.send(new RichEmbed()
       .setTitle('LightBot Settings :')
       .setColor('#f2ad16')
