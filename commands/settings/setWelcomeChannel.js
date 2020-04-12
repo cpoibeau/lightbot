@@ -1,4 +1,4 @@
-module.exports = (client, msg, prefix, args, db) => {
+module.exports = (msg, prefix, args, db) => {
   if(msg.content.split(' ')[2]){
     let welcomeChannel = msg.guild.channels.find('name', msg.content.split(' ')[2])
   

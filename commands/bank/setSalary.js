@@ -1,4 +1,4 @@
-module.exports = (client, msg, prefix, args, db) => {let regex = /<@!?(\d+)> (\d+)$/
+module.exports = (msg, prefix, args, db) => {let regex = /<@!?(\d+)> (\d+)$/
 
   if(regex.test(msg.content)){
 

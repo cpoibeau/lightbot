@@ -1,4 +1,4 @@
-module.exports = (client, msg, prefix, args, db) => {
+module.exports = (msg, prefix, args, db) => {
   let user = msg.guild.members.find('id', msg.author.id)
 
   if(user.hasPermission('MANAGE_GUILD')) {
