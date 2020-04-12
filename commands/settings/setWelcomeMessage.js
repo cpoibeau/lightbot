@@ -1,4 +1,4 @@
-module.exports = (client, msg, prefix, args, db) => {
+module.exports = (msg, prefix, args, db) => {
   if (msg.content.slice(prefix.length + 'setWelcomeMessage '.length)){
     let welcomeMessage = msg.content.slice((prefix.length + 'settings setWelcomeMessage '.length))
     

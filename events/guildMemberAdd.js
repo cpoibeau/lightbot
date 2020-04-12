@@ -1,4 +1,4 @@
-module.exports = (member) => {
+module.exports = (client, db, member) => {
   member.send(`Welcome on ${member.guild.name}, ${member.user.username} !`)
   
   db.query(`SELECT welcomeChannel FROM guilds WHERE discord_id='${member.guild.id}'`, (err, result) => {

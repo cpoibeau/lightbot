@@ -1,4 +1,4 @@
-module.exports = (client, msg, db) => {
+module.exports = (client, db, msg) => {
   if (msg.author.bot) return
 
   //prefix selection

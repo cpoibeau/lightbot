@@ -18,15 +18,13 @@ client.settings = new Discord.Collection()
 client.bank = new Discord.Collection()
 client.music = new Discord.Collection()
 
-require('./misc/fileBrowser')('./commands/', client.commands)
-require('./misc/fileBrowser')('./commands/settings/', client.settings)
-require('./misc/fileBrowser')('./commands/bank/', client.bank)
-require('./misc/fileBrowser')('./commands/music/', client.music)
+require('./misc/commandAdder')('./commands/', client.commands)
+require('./misc/commandAdder')('./commands/settings/', client.settings)
+require('./misc/commandAdder')('./commands/bank/', client.bank)
+require('./misc/commandAdder')('./commands/music/', client.music)
 
 // Event manager
-client.on('ready', () => require('./events/ready')(client, db))
-client.on('message', (msg) => require('./events/message')(client, msg, db))
-client.on('guildMemberAdd', (guildMember) => require('./events/addGuildMember')(guildMember))
+require('./misc/eventAdder')('./events/', client, db)
 
 client.on('error', console.error)
 client.on('warn', console.warn)

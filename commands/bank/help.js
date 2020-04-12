@@ -1,6 +1,6 @@
 const { RichEmbed } = require('discord.js')
 
-module.exports = (client, msg, prefix, args, db) => {
+module.exports = (msg, prefix, args, db) => {
   msg.channel.send(new RichEmbed()
       .setTitle('LightBot Bank Commands :')
       .setColor('#f2ad16')
