@@ -13,8 +13,15 @@ module.exports = (client, db, msg) => {
     reg = new RegExp(prefix + '(\\S+)')
     const cmd = args.shift().toLowerCase().match(reg)[1]
 
-    if (client.commands.has(cmd)){
+    if (!client.commands.has(cmd)) return
+    if (typeof client.commands.get(cmd) === 'object') {
+      if (!args[0]) return
+      if (!client.commands.get(cmd).has(args[0].toLowerCase())) return
+      
+      client.commands.get(cmd).get(args[0].toLowerCase())(msg, prefix, args, db)
+    } else {
+
       client.commands.get(cmd)(client, msg, prefix, args, db)
-    }
+    } 
   })
 }

@@ -19,9 +19,9 @@ client.bank = new Discord.Collection()
 client.music = new Discord.Collection()
 
 require('./utils/commandAdder')('./commands/', client.commands)
-require('./utils/commandAdder')('./commands/settings/', client.settings)
-require('./utils/commandAdder')('./commands/bank/', client.bank)
-require('./utils/commandAdder')('./commands/music/', client.music)
+// require('./utils/commandAdder')('./commands/settings/', client.settings)
+// require('./utils/commandAdder')('./commands/bank/', client.bank)
+// require('./utils/commandAdder')('./commands/music/', client.music)
 
 // Event manager
 require('./utils/eventAdder')('./events/', client, db)

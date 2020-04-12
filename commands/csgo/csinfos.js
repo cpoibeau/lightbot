@@ -1,7 +1,7 @@
 const { HLTV } = require('hltv')
 const { RichEmbed} = require('discord.js')
 
-module.exports = (client, msg, prefix, args, db) => {
+module.exports = (msg, prefix, args, db) => {
   HLTV.getMatches()
   .catch(err => console.error(err))
   .then(matches => {
@@ -10,7 +10,7 @@ module.exports = (client, msg, prefix, args, db) => {
       match = matches[i]
 
       if (match.date){
-        dateString = require('../utils/dateParser')(new Date(match.date))
+        dateString = require('../../utils/dateParser')(new Date(match.date))
       } else {
         dateString = `LIVE !`
       }

@@ -1,5 +1,6 @@
 module.exports = (msg, prefix, args, db) => {
   let regex = /([!:;,%_-]{1,2})|([\w\d]{1,4}-)/i
+  console.log(args)
 
   if(args[1].match(regex)){
     prefix = args[1]
