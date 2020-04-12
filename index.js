@@ -18,13 +18,13 @@ client.settings = new Discord.Collection()
 client.bank = new Discord.Collection()
 client.music = new Discord.Collection()
 
-require('./misc/commandAdder')('./commands/', client.commands)
-require('./misc/commandAdder')('./commands/settings/', client.settings)
-require('./misc/commandAdder')('./commands/bank/', client.bank)
-require('./misc/commandAdder')('./commands/music/', client.music)
+require('./utils/commandAdder')('./commands/', client.commands)
+require('./utils/commandAdder')('./commands/settings/', client.settings)
+require('./utils/commandAdder')('./commands/bank/', client.bank)
+require('./utils/commandAdder')('./commands/music/', client.music)
 
 // Event manager
-require('./misc/eventAdder')('./events/', client, db)
+require('./utils/eventAdder')('./events/', client, db)
 
 client.on('error', console.error)
 client.on('warn', console.warn)
