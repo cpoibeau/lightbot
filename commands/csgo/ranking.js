@@ -16,6 +16,7 @@ module.exports = (msg, prefix, args, db) => {
     msg.channel.send(new RichEmbed()
     .setTitle(`CS:GO Team Ranking`)
     .setColor('#f2ad16')
+    .setTimestamp(Date.now())
     .setDescription(desc)
     .setFooter(`Requested by : ${msg.author.tag}`)
     )
