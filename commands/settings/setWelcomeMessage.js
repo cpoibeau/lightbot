@@ -1,6 +1,6 @@
 module.exports = (msg, prefix, args, db) => {
   if (msg.content.slice(prefix.length + 'setWelcomeMessage '.length)){
-    let welcomeMessage = msg.content.slice((prefix.length + 'settings setWelcomeMessage '.length))
+    let welcomeMessage = msg.content.slice((prefix.length + 'settings setWelcomeMessage '.length)).replace('\'', '\\\'')
     
     db.query(`UPDATE guilds SET welcomeMessage='${welcomeMessage}' WHERE discord_id='${msg.guild.id}';`)
     msg.channel.send(`Welcome message has been set to : ${welcomeMessage}`)
