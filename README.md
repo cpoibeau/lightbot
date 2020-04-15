@@ -10,12 +10,13 @@ Please don't hesitate to report any issues with it in [issues](https://github.co
 ## Features
 This bot contains :
 
-- 4 public commands
-- 3 admin-only commands
-- Welcome message
+- an account command set
+- a music command set (WIP)
+- tweakable settings
+- multiple other commands to manage your server
+- Customable welcome message for new members on your server
 
 ---------------------
-For the moment there is no host but I'll host this bot myself on a Raspberry Pi when the project will be more mature.
 
 Moreover, I'm thinking about create a website with a kind of documentation or configuration panel, but it's not necessarily for soon.
 

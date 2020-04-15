@@ -29,7 +29,7 @@ module.exports = (msg, prefix, args, db) => {
       
       resultList.reverse().slice(-3).forEach(res => {
         displayResult(msg, { id: res.id })
-        setTimeout(() => {return undefined}, 20)
+        setTimeout(() => {return undefined}, 100)
       })
     })
   }

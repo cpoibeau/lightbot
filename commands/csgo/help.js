@@ -14,7 +14,6 @@ module.exports = (msg, prefix, args, db) => {
         `\`results\` - Displays top 5 last CS:GO eSport matches, with the result of each match\n` +
         `\`match\` \`<team>\` - Find the last matches played by this team. (Team name must be exact !)\n` +
         `\`match\` \`<team1/team2>\` - Find the last matches played between the two teams. (Team names must be exact !)\n`
-        
       )
       .setFooter(`Requested by : ${msg.author.tag}`)
     )
