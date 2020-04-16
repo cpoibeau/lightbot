@@ -3,9 +3,11 @@ module.exports = (client, msg, prefix, args, db) => {
 
   if (a <= 100) {
     msg.channel.bulkDelete(a)
-    .catch(console.error)
+    .catch(err => {
+      msg.channel.send('Can\'t delete messages that are under 14 days old')
+    })
+    
   } else {
     msg.channel.send('You did not enter a valid number')
-  } //TODO : Ajouter une gestion d'exception lorsque les messages sélectionés sont datés de + de 14 jours
-
+  }
 }

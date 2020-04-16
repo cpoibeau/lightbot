@@ -1,5 +1,5 @@
 module.exports = (client, db, msg) => {
-  if (msg.author.bot) return
+  if (msg.author.bot || !msg.guild) return
 
   //prefix selection
   db.query(`SELECT prefix FROM guilds WHERE discord_id='${msg.guild.id}'`, (err, result) => {

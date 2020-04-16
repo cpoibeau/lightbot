@@ -12,7 +12,6 @@ module.exports = (client, msg, prefix, args, db) => {
         `\`${prefix}help\` - Displays help\n` +
         `\`${prefix}ping\` - Answers "pong !"\n` +
         `\`${prefix}population\` - Displays the current member count of this Discord server\n` +
-        `\`${prefix}search\` \`<your-search>\` - Searches on google\n` +
         `\`${prefix}userInfos\` - Sends you a DM with additional informations about your account\n` +
         `\`${prefix}purge\` \`<number>\` - Deletes the last messages on the current channel\n` +
         `\`${prefix}csgo\` - All CS:GO commands. Type \`${prefix}csgo help\` to get some help about the CS:GO commands\n` +

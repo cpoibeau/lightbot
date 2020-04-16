@@ -1,11 +1,23 @@
+const ytdl = require('ytdl-core');
+
 module.exports = (msg, prefix, args, db) => {
-  if(msg.guild.voiceConnection){
-    if(msg.guild.voiceConnection.dispatcher){
-      msg.guild.voiceConnection.dispatcher.resume()
-    } else {
-      const dispatcher = msg.guild.voiceConnection.playFile('D:/Documents/Développement/JavaScript/lightbot/music.mp3')
-    }
+  if(msg.member.voiceChannel){
+    msg.member.voiceChannel.join()
+    .catch(console.log)
+    .then(voiceConnection => {
+    args.shift()
+    askedSong = args.join(' ')
+
+    if(voiceConnection.dispatcher && !askedSong){
+        voiceConnection.dispatcher.resume()
+      } else if (voiceConnection.dispatcher && askedSong) {
+        console.log('addPlaylist')
+      } else {
+        const dispatcher = voiceConnection.playStream(ytdl(askedSong, {filter: 'audioonly'}))
+      }
+    })
+    
   } else {
-    msg.channel.send('I must join a voice channel first !')
+    msg.channel.send('You must join a voice channel first !')
   }
 }
