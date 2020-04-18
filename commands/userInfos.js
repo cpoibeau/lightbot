@@ -1,6 +1,6 @@
 const { RichEmbed} = require('discord.js')
 
-module.exports = (client, msg, prefix, args, db) => {
+module.exports = (client, msg, prefix, args) => {
   msg.delete().catch(err => {
     console.error(err)
   })
@@ -8,10 +8,8 @@ module.exports = (client, msg, prefix, args, db) => {
   
   if (/<@!?(\d+)>/.test(args[0])) {
     user = msg.guild.members.find('id', /<@!?(\d+)>/.exec(args[0])[1]).user
-    console.log(user)
   } else {
     user = msg.author
-    console.log(user)
   }
 
   let creationDate = user.createdAt.toString().split(' ')

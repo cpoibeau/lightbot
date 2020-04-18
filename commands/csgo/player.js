@@ -1,7 +1,7 @@
 const { HLTV } = require('hltv')
 const { RichEmbed} = require('discord.js')
 
-module.exports = (msg, prefix, args, db) => {
+module.exports = (msg, prefix, args) => {
   args.shift()
   if (!args) return
 
