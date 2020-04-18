@@ -1,4 +1,4 @@
-module.exports = (client, db, msg) => {
+module.exports = (client, msg) => {
   if (msg.author.bot || !msg.guild) return
 
   //prefix selection
