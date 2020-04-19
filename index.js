@@ -1,12 +1,11 @@
 const Discord = require('discord.js')
-const Config = require('./config')
 const Mongoose = require('mongoose')
 
+const config = require('./config')
 let client = new Discord.Client()
-let config = new Config()
 
 // Database connection
-Mongoose.connect('mongodb://localhost:27017/lightbot', { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false })
+Mongoose.connect(config.dbConnect, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false })
 const connection = Mongoose.connection
 
 connection.once('open', () => [
