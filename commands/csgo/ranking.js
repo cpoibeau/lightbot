@@ -1,7 +1,7 @@
 const { HLTV } = require('hltv')
 const { RichEmbed} = require('discord.js')
 
-module.exports = (msg, prefix, args, db) => {
+module.exports = (msg, prefix, args) => {
   HLTV.getTeamRanking()
   .catch(err => console.error(err))
   .then(ranking => {

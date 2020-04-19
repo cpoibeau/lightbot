@@ -1,16 +1,16 @@
-module.exports = (msg, prefix, args, db) => {
-  let user = msg.guild.members.find('id', msg.author.id)
+let User = require('../../models/user.model')
 
-  if(user.hasPermission('MANAGE_GUILD')) {
-    db.query(`UPDATE users SET balance=balance+salary;`, (err)=>{
+module.exports = (msg, prefix, args) => {
 
-      if(err){
+  User.updateMany(
+    { guildID: msg.guild.id },
+    [{ $set: { balance: { $sum: ['$balance', '$salary'] } } }],
+    (err) => {
+      if (err) {
         msg.channel.send('Failed to give salary')
       } else {
         msg.channel.send('Salary has been successfully given to all accounts')
       }
-    })
-  } else {
-    msg.channel.send('You\'re not allowed to use this command')
-  }
+    }
+  )
 }

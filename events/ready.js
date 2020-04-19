@@ -1,11 +1,23 @@
-module.exports = (client, db) => {
-  Array.from(client.guilds.keys()).forEach((element) => {
-    let guild = client.guilds.get(element)
-    let parsed_date = guild.createdAt.toJSON().replace('T', ' ').split('.')[0]
-    
-    db.query(`INSERT INTO guilds (discord_id, name, creation_date) VALUES 
-      ('${guild.id}', '${guild.name}', '${parsed_date}') 
-      ON DUPLICATE KEY UPDATE name='${guild.name}', last_connexion=NOW();`)
+let Guild = require('../models/guild.model')
+
+module.exports = (client) => {
+  Array.from(client.guilds.keys()).forEach( (el) => {
+    let guild = client.guilds.get(el)
+
+    Guild.findOneAndUpdate(
+    { guildID: guild.id },
+    { $setOnInsert: {
+        guildID: guild.id,
+        guildName: guild.name,
+        prefix: 'lb-',
+        welcomeChannel: '478174436466622465',
+        welcomeMessage: 'Hello world !'
+      } },
+    { upsert: true, new: true },
+    (err) => {
+      if (err) console.error(err)
+    })
+
   })
 
   client.user.setActivity(`Say lb-help for help !`, {

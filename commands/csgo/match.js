@@ -1,7 +1,8 @@
 const { HLTV } = require('hltv')
 const displayResult = require('../../misc/displayResult')
 
-module.exports = (msg, prefix, args, db) => {
+module.exports = (msg, prefix, args) => {
+  args.shift()
   if (!args) return
 
   if (Number(args[1])){
