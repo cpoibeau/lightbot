@@ -16,8 +16,7 @@ module.exports = (client, msg, prefix, args) => {
         `\`${prefix}purge\` \`<number>\` - Deletes the last messages on the current channel\n` +
         `\`${prefix}csgo\` - All CS:GO commands. Type \`${prefix}csgo help\` to get some help about the CS:GO commands\n` +
         `\`${prefix}settings\` - All settings concerning this Discord server. Type \`${prefix}settings help\` to get some help about the settings\n` +
-        `\`${prefix}bank\` - All bank system commands. Type \`${prefix}bank help\` to get some help about the bank system \n` +
-        `\`${prefix}music\` - All music commands. Type \`${prefix}music help\` to get some help about the music commands`
+        `\`${prefix}bank\` - All bank system commands. Type \`${prefix}bank help\` to get some help about the bank system \n`
       )
       .setFooter(`Requested by : ${msg.author.tag}`)
     )
