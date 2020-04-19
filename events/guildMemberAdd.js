@@ -1,18 +1,24 @@
-module.exports = (client, db, member) => {
+let Guild = require('../models/guild.model')
+
+module.exports = (client, member) => {
   member.send(`Welcome on ${member.guild.name}, ${member.user.username} !`)
   
-  db.query(`SELECT welcomeChannel FROM guilds WHERE discord_id='${member.guild.id}'`, (err, result) => {
-    if (err) throw err
-    if (result){
-      welcomeChannel = member.guild.channels.get(result[0].welcomeChannel)
+  Guild.findOne(
+    { guildID: member.guild.id },
+    (err, doc) => {
+      if (err) {
+        console.error(err)
+        return
+      }
+      if (doc.welcomeChannel){
+        welcomeChannel = member.guild.channels.get(doc.welcomeChannel)
 
-      db.query(`SELECT welcomeMessage FROM guilds WHERE discord_id='${member.guild.id}'`, (err2, result2) => {
-        if (result2){
-          welcomeChannel.send(member + ' ' + result2[0].welcomeMessage)
+        if (doc.welcomeMessage) {
+          welcomeChannel.send(member + ' ' + doc.welcomeMessage)
         } else {
           welcomeChannel.send(`Welcome on our server ${member} !`)
         }
-      })
+      }
     }
-  })
+  )
 }

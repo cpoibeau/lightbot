@@ -1,6 +1,6 @@
 const ytdl = require('ytdl-core');
 
-module.exports = (msg, prefix, args, db) => {
+module.exports = (msg, prefix, args) => {
   if(msg.member.voiceChannel){
     msg.member.voiceChannel.join()
     .catch(console.log)

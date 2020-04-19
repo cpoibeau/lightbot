@@ -1,3 +1,3 @@
-module.exports = (client, msg, prefix, args, db) => {
+module.exports = (client, msg, prefix, args) => {
   msg.channel.send('Pong !')
 }
