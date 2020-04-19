@@ -6,13 +6,13 @@ module.exports = (client) => {
 
     Guild.findOneAndUpdate(
     { guildID: guild.id },
-    {
-      guildID: guild.id,
-      guildName: guild.name,
-      prefix: 'lb-',
-      welcomeChannel: '478174436466622465',
-      welcomeMessage: 'Hello world !'
-    },
+    { $setOnInsert: {
+        guildID: guild.id,
+        guildName: guild.name,
+        prefix: 'lb-',
+        welcomeChannel: '478174436466622465',
+        welcomeMessage: 'Hello world !'
+      } },
     { upsert: true, new: true },
     (err) => {
       if (err) console.error(err)
