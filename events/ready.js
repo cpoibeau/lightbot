@@ -9,15 +9,12 @@ module.exports = (client) => {
     { $setOnInsert: {
         guildID: guild.id,
         guildName: guild.name,
-        prefix: 'lb-',
-        welcomeChannel: '478174436466622465',
-        welcomeMessage: 'Hello world !'
+        prefix: 'lb-'
       } },
     { upsert: true, new: true },
     (err) => {
       if (err) console.error(err)
     })
-
   })
 
   client.user.setActivity(`Say lb-help for help !`, {
