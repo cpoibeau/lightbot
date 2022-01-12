@@ -12,9 +12,9 @@
     "discord.js": "^11.6.4",
     "ffmpeg": "0.0.4",
     "ffmpeg-binaries": "^4.0.0",
-    "hltv": "^2.19.3",
-    "mongoose": "^5.9.9",
+    "hltv": "^2.25.1",
+    "mongoose": "^5.13.13",
     "opusscript": "0.0.7",
-    "ytdl-core": "^2.1.0"
+    "ytdl-core": "^2.1.7"
   }
 }
